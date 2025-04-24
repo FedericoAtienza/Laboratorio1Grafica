@@ -1,0 +1,144 @@
+#include "SDL.h"
+#include "SDL_opengl.h"
+#include "FreeImage.h"
+#include <iostream>
+#include <stdio.h>
+#include <conio.h>
+#include <GL/glu.h>
+#include "skybox.h"
+#include "model.h"
+
+using namespace std;
+
+int main(int argc, char* argv[]) {
+
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+		cerr << "No se pudo iniciar SDL: " << SDL_GetError() << endl;
+		exit(1);
+	}
+
+	SDL_Window* win = SDL_CreateWindow("Apple Worm",
+		SDL_WINDOWPOS_CENTERED,
+		SDL_WINDOWPOS_CENTERED,
+		800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+	SDL_GLContext context = SDL_GL_CreateContext(win);
+
+	glMatrixMode(GL_PROJECTION);
+
+	float color = 0.0f;
+	glClearColor(color, color, color, 1.0f);
+
+	gluPerspective(45, 800 / 600.f, 0.1, 1500);
+	glEnable(GL_DEPTH_TEST);
+	glMatrixMode(GL_MODELVIEW);
+
+	bool fin = false;
+	bool fullscreen = false;
+
+	SDL_Event evento;
+
+	float x, y, z, angulo;
+
+	x = 0;
+	y = 0;
+	z = 0;
+
+	angulo = 0.0f;
+
+	//Conteo de tiempo para hacer movimiento independiente de FPS
+	Uint32 frame_previo = SDL_GetTicks();
+	Uint32 frame_actual;
+
+	//Carga de datos (imagenes) para poder dibujar la Skybox
+	LoadSkybox();
+
+	bool presionado = false;
+
+	Model Objeto("../Dependencias/Wumpa Fruit/Wumpa.obj");
+
+	do {
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glLoadIdentity();
+		gluLookAt(x, y, z, 0, 0, -1, 0, 1, 0);
+
+		//Giro la camara desde el centro de la plataforma y la fruta
+		glTranslatef(0.0f, -1.0f, -1.0f);
+		glRotatef(angulo, 0.0f, 1.0f, 0.0f);
+		glTranslatef(0.0f, 1.0f, 1.0f);
+
+		//Dibujo la skybox
+		glPushMatrix();
+		DrawSkybox(1000.0f);
+		glPopMatrix();
+
+		//Dibujo la fruta
+		glPushMatrix();
+		glTranslatef(0.0f, -0.3f, -1.0f);
+		glScalef(0.2f, 0.2f, 0.2f);
+		Objeto.Draw(true, false);
+		glPopMatrix();
+
+		//Dibujo la plataforma
+		glBegin(GL_QUADS);
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glVertex3f(-0.3f, -0.2f, -1.3f);
+		glVertex3f(0.3f, -0.2f, -1.3f);
+		glVertex3f(0.3f, -0.2f, -0.7f);
+		glVertex3f(-0.3f, -0.2f, -0.7f);
+		glEnd();
+
+		while (SDL_PollEvent(&evento)) {
+			switch (evento.type) {
+			case SDL_KEYDOWN:
+				switch (evento.key.keysym.sym) {
+				case SDLK_a:
+					presionado = true;
+					break;
+				}
+				break;
+			case SDL_QUIT:
+				fin = true;
+				break;
+			case SDL_KEYUP:
+				switch (evento.key.keysym.sym) {
+				case SDLK_a:
+					presionado = false;
+					break;
+				case SDLK_F11:
+					if (!fullscreen) {
+						SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN);
+						fullscreen = true;
+					}
+					else {
+						SDL_SetWindowFullscreen(win, 0);
+						fullscreen = false;
+					}
+					break;
+				case SDLK_ESCAPE:
+					fin = true;
+					break;
+				}
+			}
+		}
+
+		//Cuanto tardo en procesar el frame
+		frame_actual = SDL_GetTicks();
+
+		if (presionado) {
+			angulo = angulo + (((frame_actual - frame_previo) / 1000.0f) * 36.0f);
+		}
+
+		if (angulo >= 360.0f) {
+			angulo = angulo - 360.0f;
+		}
+
+		//Tiempo del frame "previo" se transforma en el frame que se acabo de dibujar, asi el "actual" sera el siguiente
+		frame_previo = frame_actual;
+
+		SDL_GL_SwapWindow(win);
+	} while (!fin);
+	SDL_GL_DeleteContext(context);
+	SDL_DestroyWindow(win);
+	SDL_Quit();
+	return 0;
+}
