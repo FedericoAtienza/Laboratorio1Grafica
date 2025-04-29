@@ -4,11 +4,11 @@
 using namespace std;
 
 struct Vertex {
-    //Posicion
+    // Posicion
     glm::vec3 Position;
-    //Normal
+    // Normal
     glm::vec3 Normal;
-    //Coordenadas de textura
+    // Coordenadas de textura
     glm::vec2 TexCoords;
 };
 
@@ -18,30 +18,27 @@ struct Texture {
 };
 
 class Mesh {
-public:
-    //Datos del mesh
-    map<int,Vertex> vertices;
+  public:
+    // Datos del mesh
+    map<int, Vertex> vertices;
     vector<unsigned int> indices;
-    vector<Texture>      textures;
+    vector<Texture> textures;
 
-    //Constructor
-    Mesh(map<int,Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
-    {
+    // Constructor
+    Mesh(map<int, Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures) {
         this->vertices = vertices;
         this->indices = indices;
         this->textures = textures;
     }
 
-    //Dibuja el mesh
-    void Draw(bool conTexturas, bool conRojo)
-    {
-        
+    // Dibuja el mesh
+    void Draw(bool conTexturas, bool conRojo) {
         if (conTexturas) {
-            //Preparacion de las texturas, si deben ser dibujadas
+            // Preparacion de las texturas, si deben ser dibujadas
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, textures[0].id);
         }
-        
+
         Vertex ver1, ver2, ver3;
 
         auto iterador = indices.begin();
@@ -49,15 +46,13 @@ public:
 
         if (conRojo) {
             colorAux = 0;
-        }
-        else {
+        } else {
             colorAux = 1;
         }
 
-        //Tres vertices tomados del vector de indices serán los que formaran un triangulo a dibujar,
-        //iteramos de a tres vertices en los indices y asi dibujamos todos los triangulos.
+        // Tres vertices tomados del vector de indices serï¿½n los que formaran un triangulo a dibujar,
+        // iteramos de a tres vertices en los indices y asi dibujamos todos los triangulos.
         while (iterador != indices.end()) {
-
             ver1 = vertices[*iterador];
             iterador++;
             ver2 = vertices[*iterador];
@@ -77,14 +72,11 @@ public:
             glTexCoord2f(ver3.TexCoords.x, ver3.TexCoords.y);
             glVertex3f(ver3.Position.x, ver3.Position.y, ver3.Position.z);
             glEnd();
-
         }
 
         glDisable(GL_TEXTURE_2D);
-
     }
 
-private:
-    
+  private:
 };
 #endif

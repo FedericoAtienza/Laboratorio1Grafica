@@ -1,0 +1,27 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 4 # Indent using 4 spaces
+TabWidth: 4 # Tab equivalent is 4 spaces
+UseTab: Never # Use spaces instead of tabs
+BreakBeforeBraces: Attach # Attach opening braces to the previous line
+AllowShortFunctionsOnASingleLine: None # Prevent short functions from being inlined
+ColumnLimit: 0 # Limit lines to 80 characters
+AlignTrailingComments: true # Align trailing comments
+PointerAlignment: Left
+SpaceAfterCStyleCast: true
+BinPackArguments: false # Avoid packing arguments when wrapping
+BinPackParameters: false # Avoid packing parameters when wrapping
+IndentCaseLabels: false # Do not indent case labels
+KeepEmptyLinesAtTheStartOfBlocks: false
+SpacesInAngles: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AlwaysBreakAfterReturnType: None # Keep return type on the same line unless wrapping
+BreakConstructorInitializers: BeforeComma
+CompactNamespaces: false
+IndentWrappedFunctionNames: true # Indent functions when they wrap
+ContinuationIndentWidth: 4 # Indent wrapped lines by 4 spaces
+PenaltyBreakBeforeFirstCallParameter: 1 # Prefer breaking after function name
+PenaltyReturnTypeOnItsOwnLine: 200 # Avoid breaking return types onto their own lines
+PenaltyBreakAfterReturnType: 200 # Avoid breaking after return type
+---
+
