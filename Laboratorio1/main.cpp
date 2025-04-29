@@ -1,10 +1,17 @@
-#include "SDL.h"
-#include "SDL_opengl.h"
-#include "FreeImage.h"
 #include <iostream>
 #include <stdio.h>
-#include <conio.h>
-#include <GL/glu.h>
+#ifdef __APPLE__ // macOS
+	#include <OpenGL/glu.h>  
+	#include <SDL2/SDL.h> 
+	#include <SDL2/SDL_opengl.h> 
+	#include <Freeimage/FreeImage.h>
+
+#else 
+    #include <GL/glu.h>  
+	#include "FreeImage.h"
+	#include "SDL.h"
+	#include "SDL_opengl.h"
+#endif
 #include "skybox.h"
 #include "model.h"
 
@@ -41,7 +48,7 @@ int main(int argc, char* argv[]) {
 
 	x = 0;
 	y = 0;
-	z = 0;
+	z = 10;
 
 	angulo = 0.0f;
 
@@ -54,7 +61,7 @@ int main(int argc, char* argv[]) {
 
 	bool presionado = false;
 
-	Model Objeto("../Dependencias/Wumpa Fruit/Wumpa.obj");
+	Model Objeto("../Dependencias/Apple/Apple.obj");
 
 	do {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
