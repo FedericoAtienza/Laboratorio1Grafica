@@ -365,3 +365,6 @@ FodyWeavers.xsd
 ### Cosas del ajuste para macos
 .DS_Store
 .build/
+
+# Visual Studio
+.vscode/
