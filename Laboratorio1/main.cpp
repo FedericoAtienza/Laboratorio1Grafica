@@ -15,6 +15,8 @@
 
 #include "model.h"
 #include "skybox.h"
+#include "variables.h"
+#include "worm.h"
 
 using namespace std;
 
@@ -37,7 +39,7 @@ int main(int argc, char* argv[]) {
     float color = 0.0f;
     glClearColor(color, color, color, 1.0f);
 
-    gluPerspective(45, 800 / 600.f, 0.1, 1500);
+    gluPerspective(45, 800 / 600.f, 0.1, 2500);
     glEnable(GL_DEPTH_TEST);
     glMatrixMode(GL_MODELVIEW);
 
@@ -49,14 +51,10 @@ int main(int argc, char* argv[]) {
     float x, y, z, angulo;
 
     x = 0;
-    y = 0;
-    z = 10;
+    y = 2;
+    z = 5;
 
     angulo = 0.0f;
-
-    // Conteo de tiempo para hacer movimiento independiente de FPS
-    Uint32 frame_previo = SDL_GetTicks();
-    Uint32 frame_actual;
 
     // Carga de datos (imagenes) para poder dibujar la Skybox
     LoadSkybox();
@@ -65,35 +63,48 @@ int main(int argc, char* argv[]) {
 
     Model Objeto("../Dependencias/Wumpa Fruit/Wumpa.obj");
 
+    Worm worm({0, 1});
+
     do {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
-        gluLookAt(x, y, z, 0, 0, -1, 0, 1, 0);
+        gluLookAt(x, y, z, 0, 0, 0, 0, 1, 0);
 
         // Giro la camara desde el centro de la plataforma y la fruta
-        glTranslatef(0.0f, -1.0f, -1.0f);
+        glTranslatef(0.0f, -1.0f, 0.0f);
         glRotatef(angulo, 0.0f, 1.0f, 0.0f);
-        glTranslatef(0.0f, 1.0f, 1.0f);
+        glTranslatef(0.0f, 1.0f, 0.0f);
 
         // Dibujo la skybox
         glPushMatrix();
         DrawSkybox(1000.0f);
         glPopMatrix();
 
+        // Dibujo el cubo
+        glColor3f(0.0f, 1.0f, 0.0f);
+        drawCube(0.1f);
+
+        // Dibujo el worm
+        worm.draw();
+
+        // Dibujo el mapa
+        my_map.draw();
+
         // Dibujo la fruta
-        glPushMatrix();
-        glTranslatef(0.0f, -0.3f, -1.0f);
-        glScalef(0.2f, 0.2f, 0.2f);
-        Objeto.Draw(true, false);
-        glPopMatrix();
+        // glPushMatrix();
+        // glTranslatef(0.0f, -0.3f, -1.0f);
+        // glScalef(0.2f, 0.2f, 0.2f);
+        // Objeto.Draw(true, false);
+        // glPopMatrix();
 
         // Dibujo la plataforma
         glBegin(GL_QUADS);
+        glTranslatef(0.0f, -5.0f, 0.0f);
         glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex3f(-0.3f, -0.2f, -1.3f);
-        glVertex3f(0.3f, -0.2f, -1.3f);
-        glVertex3f(0.3f, -0.2f, -0.7f);
-        glVertex3f(-0.3f, -0.2f, -0.7f);
+        glVertex3f(-0.3f, -0.3f, -0.3f);
+        glVertex3f(0.3f, -0.3f, -0.3f);
+        glVertex3f(0.3f, -0.3f, 0.3f);
+        glVertex3f(-0.3f, -0.3f, 0.3f);
         glEnd();
 
         while (SDL_PollEvent(&evento)) {
@@ -102,6 +113,18 @@ int main(int argc, char* argv[]) {
                 switch (evento.key.keysym.sym) {
                 case SDLK_a:
                     presionado = true;
+                    break;
+                case SDLK_UP:
+                    worm.move_up();
+                    break;
+                case SDLK_DOWN:
+                    worm.move_down();
+                    break;
+                case SDLK_LEFT:
+                    worm.move_left();
+                    break;
+                case SDLK_RIGHT:
+                    worm.move_right();
                     break;
                 }
                 break;
