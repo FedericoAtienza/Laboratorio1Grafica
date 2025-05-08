@@ -18,16 +18,16 @@ class Worm {
     // Attributes
     Point* head;
     Point body[WORM_MAX_LENGTH];
-    int length;
+    int body_length;
     bool animation;
     Uint32 animation_start_time;
     Point animation_end_head;
     Point animation_start_body[WORM_MAX_LENGTH];
-    bool move_and_grow;
+    //bool move_and_grow;
 
     // Check if the worm is in the given position
-    bool is_worm_in(Point p) {
-        for (int i = 0; i < length; i++) {
+    bool is_worm_body_in_point(Point p) {
+        for (int i = 0; i < body_length; i++) {
             if (body[i].x == p.x && body[i].y == p.y) {
                 return true;
             }
@@ -39,15 +39,15 @@ class Worm {
         animation_end_head = next_position;
         animation = true;
         animation_start_time = frame_actual;
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < body_length; i++) {
             animation_start_body[i].x = body[i].x;
             animation_start_body[i].y = body[i].y;
         }
     }
 
     void grow_while_moving() {
-        length++;
-        body[length - 1] = body[length - 2];
+        body_length++;
+        body[body_length - 1] = body[body_length - 2];
     }
 
     bool is_allowed_to_move(Point move_to) {
@@ -56,11 +56,12 @@ class Worm {
             return false;
         }
 
-        // Check if there is worm body in the next position
-        if (is_worm_in(move_to)) {
+        // Chequeo clision con el cuerpo
+        if (is_worm_body_in_point(move_to)) {
             return false;
         }
 
+        // Chequeo colision con bloques
         if (level_map.is_block_in_point(move_to)) {
             return false;
         }
@@ -77,20 +78,23 @@ class Worm {
   public:
     // Constructor
     Worm(Point head) {
-        this->length = 2;
+        this->body_length = 2;
         this->body[0] = head;
         this->head = &this->body[0];
         this->body[1] = {head.x - 1, head.y};
-        move_and_grow = false;
+        //move_and_grow = false;
     }
 
+    /*
     void set_grow(bool move_and_grow) {
         this->move_and_grow = move_and_grow;
     }
+    
 
     bool is_growing() {
         return move_and_grow;
     }
+    */
 
     void move_to(Point next_position) {
         if (!is_allowed_to_move(next_position))
@@ -129,19 +133,21 @@ class Worm {
             }
             body[0].x = (animation_start_body[0].x + t * (animation_end_head.x - animation_start_body[0].x));
             body[0].y = (animation_start_body[0].y + t * (animation_end_head.y - animation_start_body[0].y));
-            for (int i = length - 1; i > 0; i--) {
+            for (int i = body_length - 1; i > 0; i--) {
                 body[i].x = (animation_start_body[i].x + t * (animation_start_body[i - 1].x - animation_start_body[i].x));
                 body[i].y = (animation_start_body[i].y + t * (animation_start_body[i - 1].y - animation_start_body[i].y));
             }
         }
-        // Draw the head
+        
+        // Dibujo cabeza
         glPushMatrix();
         glTranslatef(head->x, head->y, 0);
         glColor3f(1.0f, 0.0f, 0.0f);
         drawCube(1.0f);
         glPopMatrix();
-        // Draw the body
-        for (int i = 1; i < length; i++) {
+
+        // Dibujo cuerpo
+        for (int i = 1; i < body_length; i++) {
             glPushMatrix();
             glTranslatef(body[i].x, body[i].y, 0);
             glColor3f(0.0f, 1.0f, 0.0f);
