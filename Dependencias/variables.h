@@ -16,6 +16,6 @@ const int WORM_MAX_LENGTH = 100; // Maximum length of the worm
 
 float game_speed = 2.0f; // Speed of the game
 
-Map my_map = Map();
+Map level_map = Map();
 
 #endif

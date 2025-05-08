@@ -48,18 +48,17 @@ int main(int argc, char* argv[]) {
 
     SDL_Event evento;
 
-    float x, y, z, angulo;
-
-    x = 0;
-    y = 2;
-    z = 5;
-
-    angulo = 0.0f;
+	/* Settings iniciales camara */
+    float camX, camY, camZ, camAngulo;
+    camX = 0;
+    camY = 2;
+    camZ = 5;
+    camAngulo = 0.0f;
 
     // Carga de datos (imagenes) para poder dibujar la Skybox
     LoadSkybox();
 
-    bool presionado = false;
+    bool rotarPresionado = false;
 
     Model Objeto("../Dependencias/Wumpa Fruit/Wumpa.obj");
 
@@ -68,11 +67,11 @@ int main(int argc, char* argv[]) {
     do {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
-        gluLookAt(x, y, z, 0, 0, 0, 0, 1, 0);
+        gluLookAt(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
 
         // Giro la camara desde el centro de la plataforma y la fruta
         glTranslatef(0.0f, -1.0f, 0.0f);
-        glRotatef(angulo, 0.0f, 1.0f, 0.0f);
+        glRotatef(camAngulo, 0.0f, 1.0f, 0.0f);
         glTranslatef(0.0f, 1.0f, 0.0f);
 
         // Dibujo la skybox
@@ -88,7 +87,7 @@ int main(int argc, char* argv[]) {
         worm.draw();
 
         // Dibujo el mapa
-        my_map.draw();
+        level_map.draw();
 
         // Dibujo la fruta
         // glPushMatrix();
@@ -112,7 +111,7 @@ int main(int argc, char* argv[]) {
             case SDL_KEYDOWN:
                 switch (evento.key.keysym.sym) {
                 case SDLK_a:
-                    presionado = true;
+                    rotarPresionado = true;
                     break;
                 case SDLK_UP:
                     worm.move_up();
@@ -126,6 +125,9 @@ int main(int argc, char* argv[]) {
                 case SDLK_RIGHT:
                     worm.move_right();
                     break;
+				case SDLK_ESCAPE:
+                    fin = true;
+                    break;
                 }
                 break;
             case SDL_QUIT:
@@ -134,9 +136,9 @@ int main(int argc, char* argv[]) {
             case SDL_KEYUP:
                 switch (evento.key.keysym.sym) {
                 case SDLK_a:
-                    presionado = false;
+					rotarPresionado = false;
                     break;
-                case SDLK_F11:
+                case SDLK_f:
                     if (!fullscreen) {
                         SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN);
                         fullscreen = true;
@@ -145,9 +147,6 @@ int main(int argc, char* argv[]) {
                         fullscreen = false;
                     }
                     break;
-                case SDLK_ESCAPE:
-                    fin = true;
-                    break;
                 }
             }
         }
@@ -155,12 +154,12 @@ int main(int argc, char* argv[]) {
         // Cuanto tardo en procesar el frame
         frame_actual = SDL_GetTicks();
 
-        if (presionado) {
-            angulo = angulo + (((frame_actual - frame_previo) / 1000.0f) * 36.0f);
+        if (rotarPresionado) {
+            camAngulo = camAngulo + (((frame_actual - frame_previo) / 1000.0f) * 36.0f);
         }
 
-        if (angulo >= 360.0f) {
-            angulo = angulo - 360.0f;
+        if (camAngulo >= 360.0f) {
+            camAngulo = camAngulo - 360.0f;
         }
 
         // Tiempo del frame "previo" se transforma en el frame que se acabo de dibujar, asi el "actual" sera el siguiente

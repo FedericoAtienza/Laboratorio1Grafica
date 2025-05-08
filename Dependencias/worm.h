@@ -61,13 +61,13 @@ class Worm {
             return false;
         }
 
-        if (my_map.is_block_in_point(move_to)) {
+        if (level_map.is_block_in_point(move_to)) {
             return false;
         }
 
         // Check if the worm is growing
-        if (my_map.is_apple_in_point(move_to)) {
-            my_map.remove_apple(move_to);
+        if (level_map.is_apple_in_point(move_to)) {
+            level_map.remove_apple(move_to);
             grow_while_moving();
         }
 
