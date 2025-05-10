@@ -12,6 +12,8 @@ class Apple {
     Apple(Point position);
     ~Apple();
 
+    Point get_position();
+
     bool is_in(Point p);
 
     void draw();
@@ -24,6 +26,10 @@ Apple::Apple(Point position) {
 Apple::~Apple() {
 }
 
+Point Apple::get_position() {
+    return position;
+}
+
 bool Apple::is_in(Point p) {
     return (position.x == p.x && position.y == p.y);
 }
@@ -31,8 +37,9 @@ bool Apple::is_in(Point p) {
 void Apple::draw() {
     glPushMatrix();
     glTranslatef(position.x, position.y, 0);
-    glColor3f(0.0f, 0.0f, 1.0f);
-    drawCube(1.0f);
+    glTranslatef(0.0f, -0.45f, -0.1f);
+    glScalef(0.07f, 0.07f, 0.07f);
+    appleModel.Draw(true, false);
     glPopMatrix();
 }
 

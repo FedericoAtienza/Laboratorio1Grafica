@@ -13,7 +13,7 @@
 #include <GL/glu.h>
 #endif
 
-#include "model.h"
+#include "models.h"
 #include "skybox.h"
 #include "variables.h"
 #include "worm.h"
@@ -48,11 +48,11 @@ int main(int argc, char* argv[]) {
 
     SDL_Event evento;
 
-	/* Settings iniciales camara */
+    /* Settings iniciales camara */
     float camX, camY, camZ, camAngulo;
     camX = 0;
     camY = 2;
-    camZ = 5;
+    camZ = 10;
     camAngulo = 0.0f;
 
     // Carga de datos (imagenes) para poder dibujar la Skybox
@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
 
     bool rotarPresionado = false;
 
-    Model Objeto("../Dependencias/Wumpa Fruit/Wumpa.obj");
+    loadModels();
 
     Worm worm({0, 1});
 
@@ -79,32 +79,11 @@ int main(int argc, char* argv[]) {
         DrawSkybox(1000.0f);
         glPopMatrix();
 
-        // Dibujo el cubo
-        glColor3f(0.0f, 1.0f, 0.0f);
-        drawCube(0.1f);
-
         // Dibujo el worm
         worm.draw();
 
         // Dibujo el mapa
         level_map.draw();
-
-        // Dibujo la fruta
-        // glPushMatrix();
-        // glTranslatef(0.0f, -0.3f, -1.0f);
-        // glScalef(0.2f, 0.2f, 0.2f);
-        // Objeto.Draw(true, false);
-        // glPopMatrix();
-
-        // Dibujo la plataforma
-        glBegin(GL_QUADS);
-        glTranslatef(0.0f, -5.0f, 0.0f);
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex3f(-0.3f, -0.3f, -0.3f);
-        glVertex3f(0.3f, -0.3f, -0.3f);
-        glVertex3f(0.3f, -0.3f, 0.3f);
-        glVertex3f(-0.3f, -0.3f, 0.3f);
-        glEnd();
 
         while (SDL_PollEvent(&evento)) {
             switch (evento.type) {
@@ -125,7 +104,7 @@ int main(int argc, char* argv[]) {
                 case SDLK_RIGHT:
                     worm.move_right();
                     break;
-				case SDLK_ESCAPE:
+                case SDLK_ESCAPE:
                     fin = true;
                     break;
                 }
@@ -136,7 +115,7 @@ int main(int argc, char* argv[]) {
             case SDL_KEYUP:
                 switch (evento.key.keysym.sym) {
                 case SDLK_a:
-					rotarPresionado = false;
+                    rotarPresionado = false;
                     break;
                 case SDLK_f:
                     if (!fullscreen) {

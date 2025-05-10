@@ -27,12 +27,11 @@ class Model {
     // Datos del Modelo
     vector<Texture> textures_loaded; // Almacena todas las texturas cargadas, optimizado para asegurarse que
                                      // algunas texturas no sean cargadas mas de una vez.
-    vector<Mesh> meshes; // Meshes del modelo
-    string directory;    // Directorio del modelo
+    vector<Mesh> meshes;             // Meshes del modelo
+    string directory;                // Directorio del modelo
 
     // Constructor, requiere de la ruta del archivo para cargar el modelo.
-    Model(string const& path) {
-        loadModel(path);
+    Model() {
     }
 
     // Dibuja el modelo, lo cual equivale a dibujar todos sus meshes
@@ -41,7 +40,6 @@ class Model {
             meshes[i].Draw(conTexturas, conRojo);
     }
 
-  private:
     // Carga el modelo con Assimp y almacena los meshes resultantes en el vector de meshes.
     void loadModel(string const& path) {
         Assimp::Importer importer;
@@ -58,13 +56,14 @@ class Model {
         processNode(scene->mRootNode, scene);
     }
 
+  private:
     // Procesa un nodo de manera recursiva. Procesa cada mesh localizado en el nodo y repite este
     // proceso en los nodos hijos (si tiene).
     void processNode(aiNode* node, const aiScene* scene) {
         // Procesa cada mesh localizado en el nodo actual
         for (unsigned int i = 0; i < node->mNumMeshes; i++) {
             // El objeto nodo solo contiene indices para encontrar el mesh actual en la escena.
-            //  La escena contiene toda la informacion, el nodo se utiliza solamente para mantener las cosas organizadas.
+            // La escena contiene toda la informacion, el nodo se utiliza solamente para mantener las cosas organizadas.
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
             meshes.push_back(processMesh(mesh, scene));
         }

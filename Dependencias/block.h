@@ -12,6 +12,8 @@ class Block {
     Block(Point position);
     ~Block();
 
+    Point get_position();
+
     bool is_in(Point p);
 
     void draw();
@@ -22,6 +24,10 @@ Block::Block(Point position) {
 }
 
 Block::~Block() {
+}
+
+Point Block::get_position() {
+    return position;
 }
 
 bool Block::is_in(Point p) {
