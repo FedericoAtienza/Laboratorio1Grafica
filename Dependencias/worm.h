@@ -125,6 +125,7 @@ class Worm {
         // Check if the worm is growing
         if (level_map.is_apple_in_point(move_to)) {
             level_map.remove_apple(move_to);
+            Mix_PlayChannel(-1, sfx_grow, 0);
             grow_while_moving();
         }
 
@@ -134,6 +135,7 @@ class Worm {
     void move_to(Point next_position) {
         if (!is_allowed_to_move(next_position))
             return;
+        Mix_PlayChannel(-1, sfx_movement, 0);
         animation_start_moving(next_position);
     }
 

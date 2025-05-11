@@ -39,7 +39,7 @@ void Apple::draw() {
     glTranslatef(position.x, position.y, 0);
     glTranslatef(0.0f, -0.45f, -0.1f);
     glScalef(0.07f, 0.07f, 0.07f);
-    appleModel.Draw(true, false);
+    appleModel.Draw(textures, false);
     glPopMatrix();
 }
 

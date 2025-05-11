@@ -7,9 +7,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #else
-#include "FreeImage.h"
 #include "SDL.h"
 #include "SDL_opengl.h"
+#include "FreeImage.h"
 #include <GL/glu.h>
 #endif
 
@@ -46,6 +46,11 @@ int main(int argc, char* argv[]) {
     bool fin = false;
     bool fullscreen = false;
 
+    bool wireframeActivado = false;
+    bool sombreadoInterpolado = true;
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glShadeModel(GL_SMOOTH);
+
     SDL_Event evento;
 
     /* Settings iniciales camara */
@@ -63,6 +68,8 @@ int main(int argc, char* argv[]) {
     loadModels();
 
     Worm worm({0, 1});
+
+    Mix_PlayMusic(music, 0);
 
     do {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -116,6 +123,34 @@ int main(int argc, char* argv[]) {
                 switch (evento.key.keysym.sym) {
                 case SDLK_a:
                     rotarPresionado = false;
+                    break;
+                case SDLK_x:
+                    if (wireframe) {
+                        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                        wireframe = false;
+                    }
+                    else {
+                        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                        wireframe = true;
+                    }
+                    break;
+                case SDLK_l:
+                    if (shadeFlat) {
+                        shadeFlat = false;
+                        glShadeModel(GL_SMOOTH);
+                    }
+                    else {
+                        shadeFlat = true;
+                        glShadeModel(GL_FLAT);
+                    }
+                    break;
+                case SDLK_t:
+                    if (textures) {
+                        textures = false;
+                    }
+                    else {
+                        textures = true;
+                    }
                     break;
                 case SDLK_f:
                     if (!fullscreen) {
