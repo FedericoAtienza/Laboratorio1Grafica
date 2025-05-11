@@ -152,6 +152,17 @@ int main(int argc, char* argv[]) {
                         textures = true;
                     }
                     break;
+                case SDLK_s:
+                    if (game_speed == 2.0f) {
+                        game_speed = 4.0f;
+                    }
+                    else if (game_speed == 4.0f) {
+                        game_speed = 8.0f;
+                    }
+                    else {
+                        game_speed = 2.0f;
+                    }
+                    break;
                 case SDLK_f:
                     if (!fullscreen) {
                         SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN);
@@ -159,6 +170,27 @@ int main(int argc, char* argv[]) {
                     } else {
                         SDL_SetWindowFullscreen(win, 0);
                         fullscreen = false;
+                    }
+                    break;
+                case SDLK_q:
+                    fin = true;
+                    break;
+                case SDLK_p:
+                    if (pause) {
+                        Mix_ResumeMusic();
+                        pause_end = SDL_GetTicks();
+                        if (worm.animation_start_time < pause_init) {
+                            deltaPause = pause_end - pause_init;
+                        }
+                        else {
+                            deltaPause = 0;
+                        }
+                        pause = false;
+                    }
+                    else {
+                        Mix_PauseMusic();
+                        pause_init = SDL_GetTicks();
+                        pause = true;
                     }
                     break;
                 }

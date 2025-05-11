@@ -49,7 +49,8 @@ void DrawSkybox(float size) {
         glBegin(GL_QUADS);
         glColor3f(1.0f, 1.0f, 1.0f);
         switch (i) {
-        case 0:
+        case 0: //Cara derecha
+            glNormal3f(-1.0f, 0.0f, 0.0f);
             glTexCoord2f(0, 0);
             glVertex3f(size, -size, -size);
             glTexCoord2f(1, 0);
@@ -59,7 +60,8 @@ void DrawSkybox(float size) {
             glTexCoord2f(0, 1);
             glVertex3f(size, size, -size);
             break;
-        case 1:
+        case 1: //Cara izquierda
+            glNormal3f(1.0f, 0.0f, 0.0f);
             glTexCoord2f(0, 0);
             glVertex3f(-size, -size, size);
             glTexCoord2f(1, 0);
@@ -69,7 +71,8 @@ void DrawSkybox(float size) {
             glTexCoord2f(0, 1);
             glVertex3f(-size, size, size);
             break;
-        case 2:
+        case 2: //Cara superior
+            glNormal3f(0.0f, -1.0f, 0.0f);
             glTexCoord2f(0, 0);
             glVertex3f(-size, size, -size);
             glTexCoord2f(1, 0);
@@ -79,7 +82,8 @@ void DrawSkybox(float size) {
             glTexCoord2f(0, 1);
             glVertex3f(-size, size, size);
             break;
-        case 3:
+        case 3: //Cara inferior
+            glNormal3f(0.0f, 1.0f, 0.0f);
             glTexCoord2f(0, 0);
             glVertex3f(-size, -size, size);
             glTexCoord2f(1, 0);
@@ -89,7 +93,8 @@ void DrawSkybox(float size) {
             glTexCoord2f(0, 1);
             glVertex3f(-size, -size, -size);
             break;
-        case 4:
+        case 4: //Cara frontal
+            glNormal3f(0.0f, 0.0f, -1.0f);
             glTexCoord2f(0, 0);
             glVertex3f(size, -size, size);
             glTexCoord2f(1, 0);
@@ -99,7 +104,8 @@ void DrawSkybox(float size) {
             glTexCoord2f(0, 1);
             glVertex3f(size, size, size);
             break;
-        case 5:
+        case 5: //Cara trasera
+            glNormal3f(0.0f, 0.0f, 1.0f);
             glTexCoord2f(0, 0);
             glVertex3f(-size, -size, -size);
             glTexCoord2f(1, 0);

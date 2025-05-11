@@ -14,42 +14,54 @@ void drawCube(float scale) {
     glPushMatrix();
     glScalef(scale, scale, scale);
 
+    //Cara frontal
     glBegin(GL_QUADS);
+    glNormal3f(0.0f, 0.0f, -1.0f);
     glVertex3f(-1.0, -1.0, 1.0);
     glVertex3f(1.0, -1.0, 1.0);
     glVertex3f(1.0, 1.0, 1.0);
     glVertex3f(-1.0, 1.0, 1.0);
     glEnd();
 
+    //Cara trasera
     glBegin(GL_QUADS);
+    glNormal3f(0.0f, 0.0f, 1.0f);
     glVertex3f(-1.0, -1.0, -1.0);
     glVertex3f(-1.0, 1.0, -1.0);
     glVertex3f(1.0, 1.0, -1.0);
     glVertex3f(1.0, -1.0, -1.0);
     glEnd();
 
+    //Cara superior
     glBegin(GL_QUADS);
+    glNormal3f(0.0f, -1.0f, 0.0f);
     glVertex3f(-1.0, 1.0, -1.0);
     glVertex3f(-1.0, 1.0, 1.0);
     glVertex3f(1.0, 1.0, 1.0);
     glVertex3f(1.0, 1.0, -1.0);
     glEnd();
 
+    //Cara inferior
     glBegin(GL_QUADS);
+    glNormal3f(0.0f, 1.0f, 0.0f);
     glVertex3f(-1.0, -1.0, -1.0);
     glVertex3f(1.0, -1.0, -1.0);
     glVertex3f(1.0, -1.0, 1.0);
     glVertex3f(-1.0, -1.0, 1.0);
     glEnd();
 
+    //Cara derecha
     glBegin(GL_QUADS);
+    glNormal3f(-1.0f, 0.0f, 0.0f);
     glVertex3f(1.0, -1.0, -1.0);
     glVertex3f(1.0, 1.0, -1.0);
     glVertex3f(1.0, 1.0, 1.0);
     glVertex3f(1.0, -1.0, 1.0);
     glEnd();
 
+    //Cara izquierda
     glBegin(GL_QUADS);
+    glNormal3f(1.0f, 0.0f, 0.0f);
     glVertex3f(-1.0, -1.0, -1.0);
     glVertex3f(-1.0, -1.0, 1.0);
     glVertex3f(-1.0, 1.0, 1.0);
