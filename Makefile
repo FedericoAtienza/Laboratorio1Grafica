@@ -6,7 +6,7 @@ OBJ_NAME = app
 INCLUDE_PATHS = -Iinclude -IDependencias
 LIBRARY_PATHS = -Llib/SDL2 -Llib/Freeimage -Llib/assimp
 COMPILER_FLAGS = -std=c++17 -Wall -O0 -g -Wno-deprecated-declarations
-LINKER_FLAGS = -lsdl2 -lfreeimage -lassimp
+LINKER_FLAGS = -lsdl2 -lfreeimage -lassimp -lSDL2_mixer
 FRAMEWORK_PATHS = -framework OpenGL
 
 # Ruta donde estan las libs de assimp
