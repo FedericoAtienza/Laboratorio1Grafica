@@ -129,6 +129,10 @@ class Worm {
             grow_while_moving();
         }
 
+        if (level_map.is_exit_in_point(move_to)){
+            std::cout << "ENTRASTE A SALIDA!" << std::endl;
+        }
+
         return true;
     }
 
