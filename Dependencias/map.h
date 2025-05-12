@@ -1,5 +1,6 @@
 #include "apple.h"
 #include "block.h"
+#include "exit.h"
 #include "point.h"
 #include "variables.h"
 #include <fstream>
@@ -12,9 +13,11 @@
 
 class Map {
   private:
-    /* Componentes del mapa: bloques y manzanas (por ahora) */
+    /* Componentes del mapa: bloques, manzanas, exit (por ahora) */
     std::vector<Block> blocks;
     std::vector<Apple> apples;
+    Exit exit;
+
 
     // Esto no se si ira finalmente aca o en otro archivo de utilities
     // Para cargar las posiciones de los componentes del nivel (bloques, manzanas, pinchos, ...)
@@ -28,6 +31,8 @@ class Map {
     bool is_block_in_point(Point p);
 
     bool is_apple_in_point(Point p);
+
+    bool is_exit_in_point(Point p);
 
     void remove_apple(Point p);
 
@@ -81,6 +86,13 @@ bool Map::is_apple_in_point(Point p) {
     return false;
 }
 
+bool Map::is_exit_in_point(Point p) {
+    if (exit.is_in(p)) {
+        return true;
+    }
+    return false;
+}
+
 void Map::remove_apple(Point p) {
     for (auto it = apples.begin(); it != apples.end(); ++it) {
         if (it->is_in(p)) {
@@ -97,6 +109,7 @@ void Map::draw() {
     for (auto& apple : apples) {
         apple.draw();
     }
+    exit.draw();
 }
 
 std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
@@ -122,6 +135,11 @@ std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
             float x, y;
             iss >> x >> y;
             apples.push_back(Apple({x, y}));
+        } else if (caracter == 'E') {
+            std::cout << "LEO SALIDA" << std::endl;
+            float x, y;
+            iss >> x >> y;
+            exit.set_position({x, y});
         }
     }
 
