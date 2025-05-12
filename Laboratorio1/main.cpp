@@ -6,9 +6,11 @@
 #include <OpenGL/glu.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL_ttf.h>  
 #else
 #include "SDL.h"
 #include "SDL_opengl.h"
+#include "SDL_ttf.h"
 #include "FreeImage.h"
 #include <GL/glu.h>
 #endif
@@ -17,8 +19,12 @@
 #include "skybox.h"
 #include "variables.h"
 #include "worm.h"
+#include "hud.h"
 
 using namespace std;
+
+int window_width = 800;
+int window_height = 600;
 
 int main(int argc, char* argv[]) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -29,17 +35,23 @@ int main(int argc, char* argv[]) {
     SDL_Window* win = SDL_CreateWindow("Apple Worm",
                                        SDL_WINDOWPOS_CENTERED,
                                        SDL_WINDOWPOS_CENTERED,
-                                       800,
-                                       600,
+                                       window_width,
+                                       window_height,
                                        SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
     SDL_GLContext context = SDL_GL_CreateContext(win);
+    glEnable(GL_TEXTURE_2D);
 
+
+    if (TTF_Init() == -1) {
+        printf("Error al inicializar SDL_ttf: %s\n", TTF_GetError());
+        exit(1);
+    }
     glMatrixMode(GL_PROJECTION);
 
     float color = 0.0f;
     glClearColor(color, color, color, 1.0f);
 
-    gluPerspective(45, 800 / 600.f, 0.1, 2500);
+    gluPerspective(45, (float)(window_width / window_height), 0.1, 2500);
     glEnable(GL_DEPTH_TEST);
     glMatrixMode(GL_MODELVIEW);
 
@@ -69,9 +81,25 @@ int main(int argc, char* argv[]) {
 
     Worm worm({0, 1});
 
+    /* INICIALIZACION HUD */
+
+    // Time
+    HUD my_hud = HUD();
+    my_hud.set_color_fuente_time(255, 255, 255, 255); 
+    my_hud.cargar_fuente_time("../Dependencias/Fonts/albert-text/AlbertText-Bold.ttf", 24);
+    my_hud.crear_textura_time("0");
+
     Mix_PlayMusic(music, 0);
 
+    float last_time = SDL_GetTicks() / 1000.0f;
+
+
     do {
+        float current_time = SDL_GetTicks() / 1000.0f;
+        float delta_time = current_time - last_time;
+        last_time = current_time;
+        my_hud.update_time(delta_time);
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
         gluLookAt(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
@@ -91,6 +119,8 @@ int main(int argc, char* argv[]) {
 
         // Dibujo el mapa
         level_map.draw();
+
+        my_hud.draw();
 
         while (SDL_PollEvent(&evento)) {
             switch (evento.type) {
