@@ -37,6 +37,8 @@ class Map {
     void remove_apple(Point p);
 
     void draw();
+
+    int apple_quantity();
 };
 
 Map::Map() {
@@ -145,6 +147,10 @@ std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
 
     file.close();
     return ubicaciones;
+}
+
+int Map::apple_quantity() {
+    return apples.size();
 }
 
 #endif

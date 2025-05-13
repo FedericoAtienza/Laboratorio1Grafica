@@ -13,7 +13,9 @@ private:
     TTF_Font* apple_font;
     SDL_Color apple_color;
     GLuint apple_texture;
+    GLuint apple_text_texture;
     int apple_w, apple_h; // Ancho y alto de la textura
+    float total_apples;
     float eaten_apples;
 
     GLuint cargarTextura(const char* archivo);
@@ -29,9 +31,13 @@ private:
     void update_time(float delta_time);
 
     // Para las manzanas
+    void cargar_fuente_apple(const char* ruta, int tamano);
+    void crear_textura_apple(const char* text); // Despues hacer una sola para ambos
     void cargar_textura_apple(); // Carga this->apple_texture desde archivo
+    void set_color_fuente_apple(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha);
     void draw_apple();
-    void rellenar_manzana();
+    void set_total_apples(int value);
+    void update_remaining_apples(int valor);
 
     // Dibuja todo
     void draw();
@@ -52,8 +58,20 @@ void HUD::cargar_fuente_time(const char* ruta, int tamano) {
     this->time_font = fuente;
 }
 
+void HUD::cargar_fuente_apple(const char* ruta, int tamano) {
+    TTF_Font* fuente = TTF_OpenFont(ruta, tamano);
+    if (fuente == nullptr) {
+        std::cerr << "Error al cargar la fuente: " << TTF_GetError() << std::endl;
+    }
+    this->apple_font = fuente;
+}
+
 void HUD::set_color_fuente_time(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha){
     this->time_color = {r,g,b,alpha};
+}
+
+void HUD::set_color_fuente_apple(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha){
+    this->apple_color = {r,g,b,alpha};
 }
 
 void HUD::crear_textura_time(const char* text){
@@ -94,6 +112,44 @@ void HUD::crear_textura_time(const char* text){
     this->time_texture = textura_texto;
 }
 
+void HUD::crear_textura_apple(const char* text){
+    // Primero cargo el color desde MAIN
+    // Luego cargo fuente desde MAIN 
+
+    // Genero la textura formato sdl renderizando la fuente
+    SDL_Surface* textSurface = TTF_RenderText_Blended(this->apple_font, text, this->apple_color);
+    //SDL_SetSurfaceBlendMode(textSurface, SDL_BLENDMODE_BLEND);
+    if (!textSurface) {
+        SDL_Log("No se pudo renderizar el texto: %s", TTF_GetError());
+        exit(1);
+    }
+
+    GLuint textura_texto;
+    glGenTextures(1, &textura_texto);
+    glBindTexture(GL_TEXTURE_2D, textura_texto);
+
+    // Parametros textura
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Formateo la textura formato sdl para que use RGBA
+    SDL_Surface* formattedSurface = SDL_ConvertSurfaceFormat(textSurface, SDL_PIXELFORMAT_RGBA32, 0);
+    //SDL_SetSurfaceBlendMode(formattedSurface, SDL_BLENDMODE_BLEND);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+        formattedSurface->w, formattedSurface->h, 0,
+        GL_RGBA, GL_UNSIGNED_BYTE, formattedSurface->pixels);
+
+    this->apple_w = textSurface->w;
+    this->apple_h = textSurface->h;
+
+    glBindTexture(GL_TEXTURE_2D, textura_texto);
+    SDL_FreeSurface(textSurface);
+    SDL_FreeSurface(formattedSurface);
+
+    this->apple_text_texture = textura_texto;
+}
+
 void HUD::update_time(float delta_time) {
     // Aumenta el tiempo total acumulado
     time_elapsed += delta_time;
@@ -128,18 +184,33 @@ void HUD::draw_apple(){
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, apple_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
-    int desired_width = 100;  // tamaño en pantalla de la manzana
-    int desired_height = 100;
+    int desired_width_apple = 70;  // tamaño en pantalla de la manzana
+    int desired_height_apple = 70;
 
     glBegin(GL_QUADS); 
-        glTexCoord2f(0, 0); glVertex2f(-10, 35);
-        glTexCoord2f(1, 0); glVertex2f(-10 + desired_width, 35);
-        glTexCoord2f(1, 1); glVertex2f(-10 + desired_width, 35 + desired_height);
-        glTexCoord2f(0, 1); glVertex2f(-10, 35 + desired_height);
+        glTexCoord2f(0, 0); glVertex2f(-10, 45);
+        glTexCoord2f(1, 0); glVertex2f(-10 + desired_width_apple, 45);
+        glTexCoord2f(1, 1); glVertex2f(-10 + desired_width_apple, 45 + desired_height_apple);
+        glTexCoord2f(0, 1); glVertex2f(-10, 45 + desired_height_apple);
     glEnd();
+
+    int desired_width_apple_text = 50;  // tamaño en pantalla de la manzana
+    int desired_height_apple_text = 50;
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, apple_text_texture);
+    glBegin(GL_QUADS); 
+        glTexCoord2f(0, 0); glVertex2f(50, 60);
+        glTexCoord2f(1, 0); glVertex2f(50 + desired_width_apple_text, 60);
+        glTexCoord2f(1, 1); glVertex2f(50 + desired_width_apple_text, 60 + desired_height_apple_text);
+        glTexCoord2f(0, 1); glVertex2f(50, 60 + desired_height_apple_text);
+    glEnd();
+
 
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
@@ -242,8 +313,25 @@ GLuint HUD::cargarTextura(const char* archivo) {
     return textura;
 }
 
+void HUD::set_total_apples(int value){
+    this->total_apples = value;
+}
+
 void HUD::cargar_textura_apple(){
     this->apple_texture = cargarTextura("/Users/manuelrv/Desktop/Laboratorio1Grafica/Dependencias/TexturasHUD/apple.png");
+}
+
+void HUD::update_remaining_apples(int value){
+    // Regenerar la textura del tiempo
+    if (apple_text_texture) {
+        glDeleteTextures(1, &apple_text_texture);
+    }
+
+    this->eaten_apples = value;
+
+    std::ostringstream ss;
+    ss << eaten_apples << "/" << total_apples;
+    crear_textura_apple(ss.str().c_str());
 }
 
 #endif

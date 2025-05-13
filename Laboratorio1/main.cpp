@@ -86,9 +86,18 @@ int main(int argc, char* argv[]) {
     // Time -> Por ahora inicio todo asi individual para tener la posibilidad de
     // modificarlo durante el juego aca, ver si lo cambio dsps
     HUD my_hud = HUD();
+    int cantManzanas = level_map.apple_quantity();
+    int cantManzanasComidas = 0; // Inicialmente 0
     my_hud.set_color_fuente_time(255, 255, 255, 255); 
     my_hud.cargar_fuente_time("../Dependencias/Fonts/albert-text/AlbertText-Bold.ttf", 24);
     my_hud.crear_textura_time("0");
+
+    my_hud.set_color_fuente_apple(255, 255, 255, 255); 
+    my_hud.cargar_fuente_apple("../Dependencias/Fonts/albert-text/AlbertText-Bold.ttf", 24);
+    my_hud.cargar_textura_apple();
+    my_hud.set_total_apples(cantManzanas);
+    my_hud.crear_textura_apple(cantManzanasComidas + "/" + cantManzanas);
+
 
     Mix_PlayMusic(music, 0);
 
@@ -100,6 +109,9 @@ int main(int argc, char* argv[]) {
         float delta_time = current_time - last_time;
         last_time = current_time;
         my_hud.update_time(delta_time);
+
+        cantManzanasComidas = level_map.apple_quantity();
+        my_hud.update_remaining_apples(cantManzanas - cantManzanasComidas);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
@@ -122,7 +134,6 @@ int main(int argc, char* argv[]) {
         level_map.draw();
 
         my_hud.draw();
-        my_hud.cargar_textura_apple();
         my_hud.draw_apple();
 
         while (SDL_PollEvent(&evento)) {
