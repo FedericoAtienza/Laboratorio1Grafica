@@ -83,7 +83,8 @@ int main(int argc, char* argv[]) {
 
     /* INICIALIZACION HUD */
 
-    // Time
+    // Time -> Por ahora inicio todo asi individual para tener la posibilidad de
+    // modificarlo durante el juego aca, ver si lo cambio dsps
     HUD my_hud = HUD();
     my_hud.set_color_fuente_time(255, 255, 255, 255); 
     my_hud.cargar_fuente_time("../Dependencias/Fonts/albert-text/AlbertText-Bold.ttf", 24);

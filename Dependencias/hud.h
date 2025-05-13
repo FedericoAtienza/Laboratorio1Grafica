@@ -91,7 +91,10 @@ void HUD::update_time(float delta_time) {
     time_elapsed += delta_time;
     color_timer += delta_time;
 
-    // Si pasó un segundo, cambiamos el color
+    // ESTO HAY QUE REVISARLO LOS COLORES SALEN SIEMPRE OPACOS,
+    // algun parametro blend?
+
+    // Si paso un segundo -> cambio color
     if (color_timer >= 1.0f) {
         color_timer = 0.0f;
 
