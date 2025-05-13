@@ -3,6 +3,8 @@
 
 class HUD {
 private:
+    TTF_Font* font;
+
     TTF_Font* time_font; // Fuente tiempo
     SDL_Color time_color; // Color tiempo
     GLuint time_texture; // Textura tiempo
@@ -18,23 +20,29 @@ private:
     float total_apples;
     float eaten_apples;
 
+    int level_number;
+
+    GLuint crear_textura_texto(const char* texto, TTF_Font* fuente, SDL_Color color, int& w, int& h);
+    TTF_Font* cargar_fuente(const char* ruta, int tamano);
+
+
     GLuint cargarTextura(const char* archivo);
 
     public:
-    HUD();
+    HUD(int apple_total, int lvl_number);
     ~HUD();
 
     // Para el tiempo
     void cargar_fuente_time(const char* ruta, int tamano); // Carga this->time_font desde archivo
-    void crear_textura_time(const char* text);
-    void set_color_fuente_time(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha);
+    void create_time_text(const char* text);
+    void set_time_text_color(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha); // no uso pero lo dejo mientras
     void update_time(float delta_time);
 
     // Para las manzanas
     void cargar_fuente_apple(const char* ruta, int tamano);
-    void crear_textura_apple(const char* text); // Despues hacer una sola para ambos
     void cargar_textura_apple(); // Carga this->apple_texture desde archivo
-    void set_color_fuente_apple(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha);
+    void create_apple_text(const char* text); // Despues hacer una sola para ambos
+    void set_apple_text_color(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha); // no uso pero lo dejo mientras
     void draw_apple();
     void set_total_apples(int value);
     void update_remaining_apples(int valor);
@@ -45,9 +53,33 @@ private:
     void reset(); // Por si pierde!!!!! ahi se detectaria y se invoca reset
 };
 
+HUD::HUD(int apple_total, int lvl_number){
+    std::cout << "Inicializando HUD..." << std::endl; 
+    level_number = lvl_number;
+    total_apples = apple_total;
+    eaten_apples = 0;
+    time_elapsed = 0.0f;
+    time_color = {255, 255, 255, 255};
+    apple_color = {255, 255, 255, 255};
+    font = cargar_fuente("../Dependencias/Fonts/albert-text/AlbertText-Bold.ttf", 24);
+    time_font = font;
+    apple_font = font;
+    time_texture = crear_textura_texto("0", this->time_font, this->time_color, this->time_w, this->time_h);
+    apple_texture = crear_textura_texto("0", this->apple_font, this->apple_color, this->apple_w, this->apple_h);
+    cargar_textura_apple();
+}
+
 HUD::~HUD(){
     TTF_CloseFont(time_font);
     TTF_Quit();
+}
+
+TTF_Font* HUD::cargar_fuente(const char* ruta, int tamano) {
+    TTF_Font* font = TTF_OpenFont(ruta, tamano);
+    if (font == nullptr) {
+        std::cerr << "Error al cargar la fuente: " << TTF_GetError() << std::endl;
+    }
+    return font;
 }
 
 void HUD::cargar_fuente_time(const char* ruta, int tamano) {
@@ -66,88 +98,51 @@ void HUD::cargar_fuente_apple(const char* ruta, int tamano) {
     this->apple_font = fuente;
 }
 
-void HUD::set_color_fuente_time(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha){
+void HUD::set_time_text_color(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha){
     this->time_color = {r,g,b,alpha};
 }
 
-void HUD::set_color_fuente_apple(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha){
+void HUD::set_apple_text_color(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha){
     this->apple_color = {r,g,b,alpha};
 }
 
-void HUD::crear_textura_time(const char* text){
-    // Primero cargo el color desde MAIN
-    // Luego cargo fuente desde MAIN 
-
-    // Genero la textura formato sdl renderizando la fuente
-    SDL_Surface* textSurface = TTF_RenderText_Blended(this->time_font, text, this->time_color);
-    //SDL_SetSurfaceBlendMode(textSurface, SDL_BLENDMODE_BLEND);
+GLuint HUD::crear_textura_texto(const char* texto, TTF_Font* fuente, SDL_Color color, int& w, int& h) {
+    // Renderizado con calidad antialias y alpha
+    SDL_Surface* textSurface = TTF_RenderUTF8_Blended(fuente, texto, color);
     if (!textSurface) {
         SDL_Log("No se pudo renderizar el texto: %s", TTF_GetError());
         exit(1);
     }
 
-    GLuint textura_texto;
-    glGenTextures(1, &textura_texto);
-    glBindTexture(GL_TEXTURE_2D, textura_texto);
+    // Convertir a formato compatible con OpenGL
+    SDL_Surface* formattedSurface = SDL_ConvertSurfaceFormat(textSurface, SDL_PIXELFORMAT_RGBA32, 0);
 
-    // Parametros textura
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    GLuint textura;
+    glGenTextures(1, &textura);
+    glBindTexture(GL_TEXTURE_2D, textura);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);  // Mejor calidad
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // Formateo la textura formato sdl para que use RGBA
-    SDL_Surface* formattedSurface = SDL_ConvertSurfaceFormat(textSurface, SDL_PIXELFORMAT_RGBA32, 0);
-    //SDL_SetSurfaceBlendMode(formattedSurface, SDL_BLENDMODE_BLEND);
-
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-        formattedSurface->w, formattedSurface->h, 0,
-        GL_RGBA, GL_UNSIGNED_BYTE, formattedSurface->pixels);
+                 formattedSurface->w, formattedSurface->h, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, formattedSurface->pixels);
 
-    this->time_w = textSurface->w;
-    this->time_h = textSurface->h;
+    w = formattedSurface->w;
+    h = formattedSurface->h;
 
-    glBindTexture(GL_TEXTURE_2D, textura_texto);
     SDL_FreeSurface(textSurface);
     SDL_FreeSurface(formattedSurface);
 
-    this->time_texture = textura_texto;
+    return textura;
 }
 
-void HUD::crear_textura_apple(const char* text){
-    // Primero cargo el color desde MAIN
-    // Luego cargo fuente desde MAIN 
+void HUD::create_time_text(const char* text){
+    this->time_texture = crear_textura_texto(text, this->time_font, this->time_color, this->time_w, this->time_h);
+}
 
-    // Genero la textura formato sdl renderizando la fuente
-    SDL_Surface* textSurface = TTF_RenderText_Blended(this->apple_font, text, this->apple_color);
-    //SDL_SetSurfaceBlendMode(textSurface, SDL_BLENDMODE_BLEND);
-    if (!textSurface) {
-        SDL_Log("No se pudo renderizar el texto: %s", TTF_GetError());
-        exit(1);
-    }
-
-    GLuint textura_texto;
-    glGenTextures(1, &textura_texto);
-    glBindTexture(GL_TEXTURE_2D, textura_texto);
-
-    // Parametros textura
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // Formateo la textura formato sdl para que use RGBA
-    SDL_Surface* formattedSurface = SDL_ConvertSurfaceFormat(textSurface, SDL_PIXELFORMAT_RGBA32, 0);
-    //SDL_SetSurfaceBlendMode(formattedSurface, SDL_BLENDMODE_BLEND);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-        formattedSurface->w, formattedSurface->h, 0,
-        GL_RGBA, GL_UNSIGNED_BYTE, formattedSurface->pixels);
-
-    this->apple_w = textSurface->w;
-    this->apple_h = textSurface->h;
-
-    glBindTexture(GL_TEXTURE_2D, textura_texto);
-    SDL_FreeSurface(textSurface);
-    SDL_FreeSurface(formattedSurface);
-
-    this->apple_text_texture = textura_texto;
+void HUD::create_apple_text(const char* text){
+    this->apple_text_texture = crear_textura_texto(text, this->apple_font, this->apple_color, this->apple_w, this->apple_h);
 }
 
 void HUD::update_time(float delta_time) {
@@ -164,7 +159,7 @@ void HUD::update_time(float delta_time) {
         glDeleteTextures(1, &time_texture);
     }
 
-    crear_textura_time(ss.str().c_str());
+    create_time_text(ss.str().c_str());
 }
 
 void HUD::draw_apple(){
@@ -273,16 +268,6 @@ void HUD::draw(){
 }
 
 
-/* 
-    El constructor del hud inicializara la fuente y el color del texto,
-    ademas de contadores
-*/
-HUD::HUD(){
-    std::cout << "Entro a constructor HUD" << std::endl; 
-    eaten_apples = 0;
-    time_elapsed = 0.0f;
-}
-
 GLuint HUD::cargarTextura(const char* archivo) {
     // Inicializar FreeImage
     FreeImage_Initialise();
@@ -331,7 +316,7 @@ void HUD::update_remaining_apples(int value){
 
     std::ostringstream ss;
     ss << eaten_apples << "/" << total_apples;
-    crear_textura_apple(ss.str().c_str());
+    create_apple_text(ss.str().c_str());
 }
 
 #endif

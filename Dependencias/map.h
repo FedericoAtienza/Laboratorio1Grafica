@@ -14,6 +14,7 @@
 class Map {
   private:
     /* Componentes del mapa: bloques, manzanas, exit (por ahora) */
+    int lvl;
     std::vector<Block> blocks;
     std::vector<Apple> apples;
     Exit exit;
@@ -39,6 +40,8 @@ class Map {
     void draw();
 
     int apple_quantity();
+
+    int level_number();
 };
 
 Map::Map() {
@@ -138,10 +141,13 @@ std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
             iss >> x >> y;
             apples.push_back(Apple({x, y}));
         } else if (caracter == 'E') {
-            std::cout << "LEO SALIDA" << std::endl;
             float x, y;
             iss >> x >> y;
             exit.set_position({x, y});
+        } else if (caracter == 'L') {
+            float x;
+            iss >> x;
+            this->lvl = x;
         }
     }
 
@@ -151,6 +157,10 @@ std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
 
 int Map::apple_quantity() {
     return apples.size();
+}
+
+int Map::level_number(){
+    return this->lvl;
 }
 
 #endif

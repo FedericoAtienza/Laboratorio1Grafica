@@ -82,21 +82,10 @@ int main(int argc, char* argv[]) {
     Worm worm({0, 1});
 
     /* INICIALIZACION HUD */
-
-    // Time -> Por ahora inicio todo asi individual para tener la posibilidad de
-    // modificarlo durante el juego aca, ver si lo cambio dsps
-    HUD my_hud = HUD();
     int cantManzanas = level_map.apple_quantity();
     int cantManzanasComidas = 0; // Inicialmente 0
-    my_hud.set_color_fuente_time(255, 255, 255, 255); 
-    my_hud.cargar_fuente_time("../Dependencias/Fonts/albert-text/AlbertText-Bold.ttf", 24);
-    my_hud.crear_textura_time("0");
-
-    my_hud.set_color_fuente_apple(255, 255, 255, 255); 
-    my_hud.cargar_fuente_apple("../Dependencias/Fonts/albert-text/AlbertText-Bold.ttf", 24);
-    my_hud.cargar_textura_apple();
-    my_hud.set_total_apples(cantManzanas);
-    my_hud.crear_textura_apple(cantManzanasComidas + "/" + cantManzanas);
+    int level_number = level_map.level_number();
+    HUD my_hud = HUD(cantManzanas, level_number);
 
 
     Mix_PlayMusic(music, 0);
