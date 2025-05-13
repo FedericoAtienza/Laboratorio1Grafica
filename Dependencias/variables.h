@@ -12,6 +12,7 @@
 // Conteo de tiempo para hacer movimiento independiente de FPS
 Uint32 frame_previo = SDL_GetTicks();
 Uint32 frame_actual;
+float deltaTime = 0.0f;
 
 const int WORM_MAX_LENGTH = 100; // Maximum length of the worm
 const int MAX_MAP_HIGH = 100;
@@ -38,6 +39,5 @@ Mix_Chunk* sfx_movement = cargarSonido(("../Dependencias/Sonidos/SE_Pu.wav")); /
 Mix_Chunk* sfx_grow = cargarSonido(("../Dependencias/Sonidos/SE_KILLER_POWERUP2.wav")); // Sfx for growing the worm
 
 Mix_Music* music = cargarMusica("../Dependencias/Sonidos/EdgeKakkoi.wav"); // Background music
-
 
 #endif

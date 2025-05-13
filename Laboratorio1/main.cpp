@@ -7,16 +7,15 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #else
+#include "FreeImage.h"
 #include "SDL.h"
 #include "SDL_opengl.h"
-#include "FreeImage.h"
 #include <GL/glu.h>
 #endif
 
-#include "models.h"
+#include "camera.h"
 #include "skybox.h"
 #include "variables.h"
-#include "worm.h"
 
 using namespace std;
 
@@ -53,33 +52,26 @@ int main(int argc, char* argv[]) {
 
     SDL_Event evento;
 
-    /* Settings iniciales camara */
-    float camX, camY, camZ, camAngulo;
-    camX = 0;
-    camY = 2;
-    camZ = 10;
-    camAngulo = 0.0f;
+    Camera camera;
 
     // Carga de datos (imagenes) para poder dibujar la Skybox
     LoadSkybox();
 
-    bool rotarPresionado = false;
-
     loadModels();
-
-    Worm worm({0, 1});
 
     Mix_PlayMusic(music, 0);
 
     do {
+        // Cuanto tardo en procesar el frame
+        frame_actual = SDL_GetTicks();
+        // Calculo el tiempo que paso desde el frame anterior
+        deltaTime = (frame_actual - frame_previo) / 1000.0f;
+        // Tiempo del frame "previo" se transforma en el frame que se acabo de dibujar, asi el "actual" sera el siguiente
+        frame_previo = frame_actual;
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
-        gluLookAt(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
-
-        // Giro la camara desde el centro de la plataforma y la fruta
-        glTranslatef(0.0f, -1.0f, 0.0f);
-        glRotatef(camAngulo, 0.0f, 1.0f, 0.0f);
-        glTranslatef(0.0f, 1.0f, 0.0f);
+        camera.setViewMatrix();
 
         // Dibujo la skybox
         glPushMatrix();
@@ -94,11 +86,11 @@ int main(int argc, char* argv[]) {
 
         while (SDL_PollEvent(&evento)) {
             switch (evento.type) {
+            case SDL_MOUSEMOTION:
+                camera.handleMouseMotion(evento.motion.xrel, evento.motion.yrel);
+                break;
             case SDL_KEYDOWN:
                 switch (evento.key.keysym.sym) {
-                case SDLK_a:
-                    rotarPresionado = true;
-                    break;
                 case SDLK_UP:
                     worm.move_up();
                     break;
@@ -121,15 +113,11 @@ int main(int argc, char* argv[]) {
                 break;
             case SDL_KEYUP:
                 switch (evento.key.keysym.sym) {
-                case SDLK_a:
-                    rotarPresionado = false;
-                    break;
                 case SDLK_x:
                     if (wireframe) {
                         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
                         wireframe = false;
-                    }
-                    else {
+                    } else {
                         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                         wireframe = true;
                     }
@@ -138,8 +126,7 @@ int main(int argc, char* argv[]) {
                     if (shadeFlat) {
                         shadeFlat = false;
                         glShadeModel(GL_SMOOTH);
-                    }
-                    else {
+                    } else {
                         shadeFlat = true;
                         glShadeModel(GL_FLAT);
                     }
@@ -147,19 +134,16 @@ int main(int argc, char* argv[]) {
                 case SDLK_t:
                     if (textures) {
                         textures = false;
-                    }
-                    else {
+                    } else {
                         textures = true;
                     }
                     break;
-                case SDLK_s:
+                case SDLK_v:
                     if (game_speed == 2.0f) {
                         game_speed = 4.0f;
-                    }
-                    else if (game_speed == 4.0f) {
+                    } else if (game_speed == 4.0f) {
                         game_speed = 8.0f;
-                    }
-                    else {
+                    } else {
                         game_speed = 2.0f;
                     }
                     break;
@@ -181,35 +165,24 @@ int main(int argc, char* argv[]) {
                         pause_end = SDL_GetTicks();
                         if (worm.animation_start_time < pause_init) {
                             deltaPause = pause_end - pause_init;
-                        }
-                        else {
+                        } else {
                             deltaPause = 0;
                         }
                         pause = false;
-                    }
-                    else {
+                    } else {
                         Mix_PauseMusic();
                         pause_init = SDL_GetTicks();
                         pause = true;
                     }
                     break;
+                case SDLK_c:
+                    camera.changeCameraType();
+                    break;
                 }
             }
         }
 
-        // Cuanto tardo en procesar el frame
-        frame_actual = SDL_GetTicks();
-
-        if (rotarPresionado) {
-            camAngulo = camAngulo + (((frame_actual - frame_previo) / 1000.0f) * 36.0f);
-        }
-
-        if (camAngulo >= 360.0f) {
-            camAngulo = camAngulo - 360.0f;
-        }
-
-        // Tiempo del frame "previo" se transforma en el frame que se acabo de dibujar, asi el "actual" sera el siguiente
-        frame_previo = frame_actual;
+        camera.handleMovementKeys();
 
         SDL_GL_SwapWindow(win);
     } while (!fin);

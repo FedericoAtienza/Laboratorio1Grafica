@@ -5,7 +5,7 @@
 #include "SDL_mixer.h"
 #endif
 
-Mix_Music* cargarMusica(string ruta) {
+Mix_Music* cargarMusica(std::string ruta) {
     Mix_Music* res = Mix_LoadMUS(ruta.c_str());
     if (res == NULL) {
         printf("Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError());
@@ -13,7 +13,7 @@ Mix_Music* cargarMusica(string ruta) {
     return res;
 }
 
-Mix_Chunk* cargarSonido(string ruta) {
+Mix_Chunk* cargarSonido(std::string ruta) {
     Mix_Chunk* res = Mix_LoadWAV(ruta.c_str());
     if (res == NULL) {
         printf("Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError());

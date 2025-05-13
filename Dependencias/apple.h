@@ -1,4 +1,5 @@
 #include "cube.h"
+#include "models.h"
 #include "point.h"
 
 #ifndef APPLE_H

@@ -17,6 +17,7 @@
 class Worm {
   public:
     Uint32 animation_start_time;
+
   private:
     Point* head;
     Point body[WORM_MAX_LENGTH];
@@ -137,7 +138,7 @@ class Worm {
             grow_while_moving();
         }
 
-        if (level_map.is_exit_in_point(move_to)){
+        if (level_map.is_exit_in_point(move_to)) {
             std::cout << "ENTRASTE A SALIDA!" << std::endl;
         }
 
@@ -207,6 +208,10 @@ class Worm {
             animation_handler();
         }
         draw_worm();
+    }
+
+    Point get_head() {
+        return *head;
     }
 };
 
