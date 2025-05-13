@@ -123,7 +123,6 @@ int main(int argc, char* argv[]) {
         level_map.draw();
 
         my_hud.draw();
-        my_hud.draw_apple();
 
         while (SDL_PollEvent(&evento)) {
             switch (evento.type) {

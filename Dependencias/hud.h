@@ -21,6 +21,9 @@ private:
     float eaten_apples;
 
     int level_number;
+    SDL_Color level_color;
+    GLuint level_number_texture;
+    int level_w, level_h;
 
     GLuint crear_textura_texto(const char* texto, TTF_Font* fuente, SDL_Color color, int& w, int& h);
     TTF_Font* cargar_fuente(const char* ruta, int tamano);
@@ -43,7 +46,6 @@ private:
     void cargar_textura_apple(); // Carga this->apple_texture desde archivo
     void create_apple_text(const char* text); // Despues hacer una sola para ambos
     void set_apple_text_color(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha); // no uso pero lo dejo mientras
-    void draw_apple();
     void set_total_apples(int value);
     void update_remaining_apples(int valor);
 
@@ -61,11 +63,14 @@ HUD::HUD(int apple_total, int lvl_number){
     time_elapsed = 0.0f;
     time_color = {255, 255, 255, 255};
     apple_color = {255, 255, 255, 255};
+    level_color = {255, 255, 255, 255};
     font = cargar_fuente("../Dependencias/Fonts/albert-text/AlbertText-Bold.ttf", 24);
     time_font = font;
     apple_font = font;
-    time_texture = crear_textura_texto("0", this->time_font, this->time_color, this->time_w, this->time_h);
-    apple_texture = crear_textura_texto("0", this->apple_font, this->apple_color, this->apple_w, this->apple_h);
+    time_texture = crear_textura_texto("0", this->font, this->time_color, this->time_w, this->time_h);
+    apple_text_texture = crear_textura_texto("0", this->font, this->apple_color, this->apple_w, this->apple_h);
+    std::string lvl = "Level " + std::to_string(level_number);
+    level_number_texture = crear_textura_texto(lvl.c_str(), this->font, this->level_color, this->level_w, this->level_h);
     cargar_textura_apple();
 }
 
@@ -162,65 +167,6 @@ void HUD::update_time(float delta_time) {
     create_time_text(ss.str().c_str());
 }
 
-void HUD::draw_apple(){
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    gluOrtho2D(0, 800, 600, 0);  // PONER window_width, window_height
-
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_LIGHTING);
-
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, apple_texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-    int desired_width_apple = 70;  // tamaño en pantalla de la manzana
-    int desired_height_apple = 70;
-
-    glBegin(GL_QUADS); 
-        glTexCoord2f(0, 0); glVertex2f(-10, 45);
-        glTexCoord2f(1, 0); glVertex2f(-10 + desired_width_apple, 45);
-        glTexCoord2f(1, 1); glVertex2f(-10 + desired_width_apple, 45 + desired_height_apple);
-        glTexCoord2f(0, 1); glVertex2f(-10, 45 + desired_height_apple);
-    glEnd();
-
-    int desired_width_apple_text = 50;  // tamaño en pantalla de la manzana
-    int desired_height_apple_text = 50;
-
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, apple_text_texture);
-    glBegin(GL_QUADS); 
-        glTexCoord2f(0, 0); glVertex2f(50, 60);
-        glTexCoord2f(1, 0); glVertex2f(50 + desired_width_apple_text, 60);
-        glTexCoord2f(1, 1); glVertex2f(50 + desired_width_apple_text, 60 + desired_height_apple_text);
-        glTexCoord2f(0, 1); glVertex2f(50, 60 + desired_height_apple_text);
-    glEnd();
-
-
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-
-    glEnable(GL_DEPTH_TEST);
-    glDisable(GL_BLEND);
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHTING); 
-
-    glPopMatrix(); 
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix(); 
-    glMatrixMode(GL_MODELVIEW);
-}
-
 void HUD::draw(){
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -231,31 +177,67 @@ void HUD::draw(){
     glPushMatrix();
     glLoadIdentity();
 
-    // Activo el blending y desactivo el depth test
-    // para que el texto se dibuje correctamente, sin que sea tapado por otros objetos 3D
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, time_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // Uso GL_REPLACE para que utilice el color de mi textura, no el del ultimo glColor
-    // que se seteo anteriormente como el color actual de opengl
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
-    glBegin(GL_QUADS);
-        glTexCoord2f(0, 0); glVertex2f(10, 10);
-        glTexCoord2f(1, 0); glVertex2f(10 + time_w, 10);
-        glTexCoord2f(1, 1); glVertex2f(10 + time_w, 10 + time_h);
-        glTexCoord2f(0, 1); glVertex2f(10, 10 + time_h);
+    int x = 10;
+    int y = 10;
+    int separacion = 10;
+
+    // 1. Dibujo Level
+    glBindTexture(GL_TEXTURE_2D, level_number_texture);
+    glBegin(GL_QUADS); 
+        glTexCoord2f(0, 0); glVertex2f(x, y);
+        glTexCoord2f(1, 0); glVertex2f(x + level_w, y);
+        glTexCoord2f(1, 1); glVertex2f(x + level_w, y + level_h);
+        glTexCoord2f(0, 1); glVertex2f(x, y + level_h);
     glEnd();
 
-    // Restauro esto a como estaba antes
+    // 2. Dibujo time
+    y += level_h + separacion;
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, time_texture);
+    glBegin(GL_QUADS);
+        glTexCoord2f(0, 0); glVertex2f(x, y);
+        glTexCoord2f(1, 0); glVertex2f(x + time_w, y);
+        glTexCoord2f(1, 1); glVertex2f(x + time_w, y + time_h);
+        glTexCoord2f(0, 1); glVertex2f(x, y + time_h);
+    glEnd();
+
+    // 3. Dibujo apple y apple_text
+    y += time_h + separacion;
+    int desired_width_apple = 70;  // tamaño en pantalla de la manzana
+    int desired_height_apple = 70;
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, apple_texture);
+    glBegin(GL_QUADS); 
+        glTexCoord2f(0, 0); glVertex2f(x, y);
+        glTexCoord2f(1, 0); glVertex2f(x + desired_width_apple, y);
+        glTexCoord2f(1, 1); glVertex2f(x + desired_width_apple, y + desired_height_apple);
+        glTexCoord2f(0, 1); glVertex2f(x, y + desired_height_apple);
+    glEnd();
+
+    x += desired_width_apple;
+    y += (desired_height_apple - apple_h) / 2;
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, apple_text_texture);
+    glBegin(GL_QUADS); 
+        glTexCoord2f(0, 0); glVertex2f(x, y);
+        glTexCoord2f(1, 0); glVertex2f(x + apple_w , y);
+        glTexCoord2f(1, 1); glVertex2f(x + apple_w, y + apple_h);
+        glTexCoord2f(0, 1); glVertex2f(x, y + apple_h);
+    glEnd();
+
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    
-    // Y tambien restauro estos parametros anteriores
+
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
@@ -266,7 +248,6 @@ void HUD::draw(){
     glPopMatrix(); 
     glMatrixMode(GL_MODELVIEW);
 }
-
 
 GLuint HUD::cargarTextura(const char* archivo) {
     // Inicializar FreeImage
