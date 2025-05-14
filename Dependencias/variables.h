@@ -19,6 +19,8 @@ const int MAX_MAP_HIGH = 100;
 // Settings
 float game_speed = 2.0f; // Speed of the game
 
+bool light = false;
+
 bool textures = true; // Draw textures or not
 
 bool wireframe = false; // Activates wireframe or deactivates it
@@ -38,6 +40,5 @@ Mix_Chunk* sfx_movement = cargarSonido(("../Dependencias/Sonidos/SE_Pu.wav")); /
 Mix_Chunk* sfx_grow = cargarSonido(("../Dependencias/Sonidos/SE_KILLER_POWERUP2.wav")); // Sfx for growing the worm
 
 Mix_Music* music = cargarMusica("../Dependencias/Sonidos/EdgeKakkoi.wav"); // Background music
-
 
 #endif

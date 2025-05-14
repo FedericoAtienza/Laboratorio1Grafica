@@ -9,6 +9,7 @@
 #else
 #include "SDL.h"
 #include "SDL_opengl.h"
+#include "SDL_ttf.h"
 #include "FreeImage.h"
 #include <GL/glu.h>
 #endif
@@ -17,6 +18,7 @@
 #include "skybox.h"
 #include "variables.h"
 #include "worm.h"
+#include "settings.h"
 
 using namespace std;
 
@@ -43,8 +45,13 @@ int main(int argc, char* argv[]) {
     glEnable(GL_DEPTH_TEST);
     glMatrixMode(GL_MODELVIEW);
 
+    // Admits blending of objects, important for text blending for example
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     bool fin = false;
     bool fullscreen = false;
+    bool opciones = false;
 
     bool wireframeActivado = false;
     bool sombreadoInterpolado = true;
@@ -67,9 +74,12 @@ int main(int argc, char* argv[]) {
 
     loadModels();
 
+    Settings settings;
+    settings.init_settings();
+
     Worm worm({0, 1});
 
-    Mix_PlayMusic(music, 0);
+    //Mix_PlayMusic(music, 0);
 
     do {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -92,24 +102,46 @@ int main(int argc, char* argv[]) {
         // Dibujo el mapa
         level_map.draw();
 
+        // Dibujo las opciones
+        if (opciones) {
+            if (wireframe) {
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                settings.draw_settings();
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            }
+            else {
+                settings.draw_settings();
+            }
+        }
+
+        //Dibujo la pausa
+        if (pause && !opciones) {
+            settings.draw_pause();
+        }
+
         while (SDL_PollEvent(&evento)) {
             switch (evento.type) {
             case SDL_KEYDOWN:
                 switch (evento.key.keysym.sym) {
                 case SDLK_a:
-                    rotarPresionado = true;
+                    if (!opciones)
+                        rotarPresionado = true;
                     break;
                 case SDLK_UP:
-                    worm.move_up();
+                    if (!opciones && !pause)
+                        worm.move_up();
                     break;
                 case SDLK_DOWN:
-                    worm.move_down();
+                    if (!opciones && !pause)
+                        worm.move_down();
                     break;
                 case SDLK_LEFT:
-                    worm.move_left();
+                    if (!opciones && !pause)
+                        worm.move_left();
                     break;
                 case SDLK_RIGHT:
-                    worm.move_right();
+                    if (!opciones && !pause)
+                        worm.move_right();
                     break;
                 case SDLK_ESCAPE:
                     fin = true;
@@ -122,7 +154,16 @@ int main(int argc, char* argv[]) {
             case SDL_KEYUP:
                 switch (evento.key.keysym.sym) {
                 case SDLK_a:
-                    rotarPresionado = false;
+                    if (!opciones)
+                        rotarPresionado = false;
+                    break;
+                case SDLK_l:
+                    if (light) {
+                        light = false;
+                    }
+                    else {
+                        light = true;
+                    }
                     break;
                 case SDLK_x:
                     if (wireframe) {
@@ -134,7 +175,7 @@ int main(int argc, char* argv[]) {
                         wireframe = true;
                     }
                     break;
-                case SDLK_l:
+                case SDLK_z:
                     if (shadeFlat) {
                         shadeFlat = false;
                         glShadeModel(GL_SMOOTH);
@@ -150,6 +191,26 @@ int main(int argc, char* argv[]) {
                     }
                     else {
                         textures = true;
+                    }
+                    break;
+                case SDLK_RETURN:
+                    if (opciones) {
+                        opciones = false;
+                        Mix_ResumeMusic();
+                        pause_end = SDL_GetTicks();
+                        if (worm.animation_start_time < pause_init) {
+                            deltaPause = pause_end - pause_init;
+                        }
+                        else {
+                            deltaPause = 0;
+                        }
+                        pause = false;
+                    }
+                    else if (!pause) {
+                        Mix_PauseMusic();
+                        pause_init = SDL_GetTicks();
+                        opciones = true;
+                        pause = true;
                     }
                     break;
                 case SDLK_s:
@@ -176,21 +237,23 @@ int main(int argc, char* argv[]) {
                     fin = true;
                     break;
                 case SDLK_p:
-                    if (pause) {
-                        Mix_ResumeMusic();
-                        pause_end = SDL_GetTicks();
-                        if (worm.animation_start_time < pause_init) {
-                            deltaPause = pause_end - pause_init;
+                    if (!opciones) {
+                        if (pause) {
+                            Mix_ResumeMusic();
+                            pause_end = SDL_GetTicks();
+                            if (worm.animation_start_time < pause_init) {
+                                deltaPause = pause_end - pause_init;
+                            }
+                            else {
+                                deltaPause = 0;
+                            }
+                            pause = false;
                         }
                         else {
-                            deltaPause = 0;
+                            Mix_PauseMusic();
+                            pause_init = SDL_GetTicks();
+                            pause = true;
                         }
-                        pause = false;
-                    }
-                    else {
-                        Mix_PauseMusic();
-                        pause_init = SDL_GetTicks();
-                        pause = true;
                     }
                     break;
                 }
