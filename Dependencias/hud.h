@@ -2,15 +2,15 @@
 #define HUD_H
 
 class HUD {
-private:
+  private:
     TTF_Font* font;
 
-    TTF_Font* time_font; // Fuente tiempo
+    TTF_Font* time_font;  // Fuente tiempo
     SDL_Color time_color; // Color tiempo
-    GLuint time_texture; // Textura tiempo
-    int time_w, time_h; // Ancho y alto de la textura
-    float time_elapsed; // El tiempo que paso desde inicio juego
-    float color_timer; // Por agregar algo mas xd pongo que cambie de color
+    GLuint time_texture;  // Textura tiempo
+    int time_w, time_h;   // Ancho y alto de la textura
+    float time_elapsed;   // El tiempo que paso desde inicio juego
+    float color_timer;    // Por agregar algo mas xd pongo que cambie de color
 
     TTF_Font* apple_font;
     SDL_Color apple_color;
@@ -40,7 +40,7 @@ private:
     GLuint cargarTexturaApple(const char* archivo);
     GLuint cargarTexturaCarta(const char* archivo);
 
-    public:
+  public:
     HUD(int apple_total, int lvl_number);
     ~HUD();
 
@@ -52,8 +52,8 @@ private:
 
     // Para las manzanas
     void cargar_fuente_apple(const char* ruta, int tamano);
-    void cargar_textura_apple(); // Carga this->apple_texture desde archivo
-    void create_apple_text(const char* text); // Despues hacer una sola para ambos
+    void cargar_textura_apple();                                       // Carga this->apple_texture desde archivo
+    void create_apple_text(const char* text);                          // Despues hacer una sola para ambos
     void set_apple_text_color(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha); // no uso pero lo dejo mientras
     void set_total_apples(int value);
     void update_remaining_apples(int valor);
@@ -64,8 +64,8 @@ private:
     // Para el nivel
     void create_level_text(const char* text);
 
-    // Para frame/carta 
-    void cargar_textura_carta(); 
+    // Para frame/carta
+    void cargar_textura_carta();
 
     // Dibuja todo
     void draw();
@@ -74,14 +74,14 @@ private:
     void reset(); // Por si pierde, ahi se detectaria y se invoca reset
 };
 
-HUD::HUD(int apple_total, int lvl_number){
-    std::cout << "Inicializando HUD..." << std::endl; 
+HUD::HUD(int apple_total, int lvl_number) {
+    std::cout << "Inicializando HUD..." << std::endl;
     level_number = lvl_number;
     speed_number = 1;
     total_apples = apple_total;
     eaten_apples = 0;
     time_elapsed = 0.0f;
-    time_color = {205, 133, 63, 255} ;
+    time_color = {205, 133, 63, 255};
     apple_color = {205, 133, 63, 255};
     level_color = {188, 143, 143, 255};
     speed_color = {210, 105, 30, 255};
@@ -98,7 +98,7 @@ HUD::HUD(int apple_total, int lvl_number){
     cargar_textura_carta();
 }
 
-HUD::~HUD(){
+HUD::~HUD() {
     TTF_CloseFont(time_font);
     TTF_Quit();
 }
@@ -127,12 +127,12 @@ void HUD::cargar_fuente_apple(const char* ruta, int tamano) {
     this->apple_font = fuente;
 }
 
-void HUD::set_time_text_color(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha){
-    this->time_color = {r,g,b,alpha};
+void HUD::set_time_text_color(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha) {
+    this->time_color = {r, g, b, alpha};
 }
 
-void HUD::set_apple_text_color(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha){
-    this->apple_color = {r,g,b,alpha};
+void HUD::set_apple_text_color(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha) {
+    this->apple_color = {r, g, b, alpha};
 }
 
 GLuint HUD::crear_textura_texto(const char* texto, TTF_Font* fuente, SDL_Color color, int& w, int& h) {
@@ -150,12 +150,10 @@ GLuint HUD::crear_textura_texto(const char* texto, TTF_Font* fuente, SDL_Color c
     glGenTextures(1, &textura);
     glBindTexture(GL_TEXTURE_2D, textura);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);  // Mejor calidad
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Mejor calidad
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                 formattedSurface->w, formattedSurface->h, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, formattedSurface->pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, formattedSurface->w, formattedSurface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, formattedSurface->pixels);
 
     w = formattedSurface->w;
     h = formattedSurface->h;
@@ -166,19 +164,19 @@ GLuint HUD::crear_textura_texto(const char* texto, TTF_Font* fuente, SDL_Color c
     return textura;
 }
 
-void HUD::create_time_text(const char* text){
+void HUD::create_time_text(const char* text) {
     this->time_texture = crear_textura_texto(text, this->time_font, this->time_color, this->time_w, this->time_h);
 }
 
-void HUD::create_apple_text(const char* text){
+void HUD::create_apple_text(const char* text) {
     this->apple_text_texture = crear_textura_texto(text, this->apple_font, this->apple_color, this->apple_w, this->apple_h);
 }
 
-void HUD::create_level_text(const char* text){
+void HUD::create_level_text(const char* text) {
     this->level_number_texture = crear_textura_texto(text, this->font, this->level_color, this->level_w, this->level_h);
 }
 
-void HUD::create_speed_text(const char* text){
+void HUD::create_speed_text(const char* text) {
     this->speed_texture = crear_textura_texto(text, this->speed_font, this->speed_color, this->speed_w, this->speed_h);
 }
 
@@ -199,11 +197,11 @@ void HUD::update_time(float delta_time) {
     create_time_text(ss.str().c_str());
 }
 
-void HUD::draw(){
+void HUD::draw() {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    gluOrtho2D(0, 800, 600, 0);  // PONER window_width, window_height
+    gluOrtho2D(0, 800, 600, 0); // PONER window_width, window_height
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -227,21 +225,29 @@ void HUD::draw(){
 
     // 0. Dibujo carta/marco
     glBindTexture(GL_TEXTURE_2D, carta_texture);
-    glBegin(GL_QUADS); 
-        glTexCoord2f(0, 0); glVertex2f(x_frame, y);
-        glTexCoord2f(1, 0); glVertex2f(x_frame + 120, y);
-        glTexCoord2f(1, 1); glVertex2f(x_frame + 120, y + 180);
-        glTexCoord2f(0, 1); glVertex2f(x_frame, y + 180);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0, 0);
+    glVertex2f(x_frame, y);
+    glTexCoord2f(1, 0);
+    glVertex2f(x_frame + 120, y);
+    glTexCoord2f(1, 1);
+    glVertex2f(x_frame + 120, y + 180);
+    glTexCoord2f(0, 1);
+    glVertex2f(x_frame, y + 180);
     glEnd();
 
     // 1. Dibujo Level
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, level_number_texture);
-    glBegin(GL_QUADS); 
-        glTexCoord2f(0, 0); glVertex2f(x, y);
-        glTexCoord2f(1, 0); glVertex2f(x + level_w, y);
-        glTexCoord2f(1, 1); glVertex2f(x + level_w, y + level_h);
-        glTexCoord2f(0, 1); glVertex2f(x, y + level_h);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0, 0);
+    glVertex2f(x, y);
+    glTexCoord2f(1, 0);
+    glVertex2f(x + level_w, y);
+    glTexCoord2f(1, 1);
+    glVertex2f(x + level_w, y + level_h);
+    glTexCoord2f(0, 1);
+    glVertex2f(x, y + level_h);
     glEnd();
 
     // 2. Dibujo time
@@ -249,10 +255,14 @@ void HUD::draw(){
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, time_texture);
     glBegin(GL_QUADS);
-        glTexCoord2f(0, 0); glVertex2f(x, y);
-        glTexCoord2f(1, 0); glVertex2f(x + time_w, y);
-        glTexCoord2f(1, 1); glVertex2f(x + time_w, y + time_h);
-        glTexCoord2f(0, 1); glVertex2f(x, y + time_h);
+    glTexCoord2f(0, 0);
+    glVertex2f(x, y);
+    glTexCoord2f(1, 0);
+    glVertex2f(x + time_w, y);
+    glTexCoord2f(1, 1);
+    glVertex2f(x + time_w, y + time_h);
+    glTexCoord2f(0, 1);
+    glVertex2f(x, y + time_h);
     glEnd();
 
     // 3. Dibujo speed
@@ -260,46 +270,58 @@ void HUD::draw(){
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, speed_texture);
     glBegin(GL_QUADS);
-        glTexCoord2f(0, 0); glVertex2f(x, y);
-        glTexCoord2f(1, 0); glVertex2f(x + speed_w, y);
-        glTexCoord2f(1, 1); glVertex2f(x + speed_w, y + speed_h);
-        glTexCoord2f(0, 1); glVertex2f(x, y + speed_h);
+    glTexCoord2f(0, 0);
+    glVertex2f(x, y);
+    glTexCoord2f(1, 0);
+    glVertex2f(x + speed_w, y);
+    glTexCoord2f(1, 1);
+    glVertex2f(x + speed_w, y + speed_h);
+    glTexCoord2f(0, 1);
+    glVertex2f(x, y + speed_h);
     glEnd();
 
     // 4. Dibujo apple y apple_text
     y += speed_h + separacion;
-    int desired_width_apple = 50;  // tamaño en pantalla de la manzana
+    int desired_width_apple = 50; // tamaño en pantalla de la manzana
     int desired_height_apple = 50;
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, apple_texture);
-    glBegin(GL_QUADS); 
-        glTexCoord2f(0, 0); glVertex2f(x, y);
-        glTexCoord2f(1, 0); glVertex2f(x + desired_width_apple, y);
-        glTexCoord2f(1, 1); glVertex2f(x + desired_width_apple, y + desired_height_apple);
-        glTexCoord2f(0, 1); glVertex2f(x, y + desired_height_apple);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0, 0);
+    glVertex2f(x, y);
+    glTexCoord2f(1, 0);
+    glVertex2f(x + desired_width_apple, y);
+    glTexCoord2f(1, 1);
+    glVertex2f(x + desired_width_apple, y + desired_height_apple);
+    glTexCoord2f(0, 1);
+    glVertex2f(x, y + desired_height_apple);
     glEnd();
 
     x += desired_width_apple;
     y += (desired_height_apple - apple_h) / 2;
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, apple_text_texture);
-    glBegin(GL_QUADS); 
-        glTexCoord2f(0, 0); glVertex2f(x, y);
-        glTexCoord2f(1, 0); glVertex2f(x + apple_w , y);
-        glTexCoord2f(1, 1); glVertex2f(x + apple_w, y + apple_h);
-        glTexCoord2f(0, 1); glVertex2f(x, y + apple_h);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0, 0);
+    glVertex2f(x, y);
+    glTexCoord2f(1, 0);
+    glVertex2f(x + apple_w, y);
+    glTexCoord2f(1, 1);
+    glVertex2f(x + apple_w, y + apple_h);
+    glTexCoord2f(0, 1);
+    glVertex2f(x, y + apple_h);
     glEnd();
 
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     glEnable(GL_DEPTH_TEST);
-    glDisable(GL_BLEND);
+    // glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHTING); 
+    glDisable(GL_LIGHTING);
 
-    glPopMatrix(); 
+    glPopMatrix();
     glMatrixMode(GL_PROJECTION);
-    glPopMatrix(); 
+    glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
 }
 
@@ -311,7 +333,7 @@ GLuint HUD::cargarTexturaApple(const char* archivo) {
     FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilename(archivo);
     FIBITMAP* bitmap = FreeImage_Load(fif, archivo);
     bitmap = FreeImage_ConvertTo32Bits(bitmap);
-    FreeImage_FlipVertical(bitmap); 
+    FreeImage_FlipVertical(bitmap);
     this->apple_w = FreeImage_GetWidth(bitmap);
     this->apple_h = FreeImage_GetHeight(bitmap);
     GLubyte* datos = FreeImage_GetBits(bitmap);
@@ -320,7 +342,7 @@ GLuint HUD::cargarTexturaApple(const char* archivo) {
     GLuint textura;
     glGenTextures(1, &textura);
     glBindTexture(GL_TEXTURE_2D, textura);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST); 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -341,7 +363,7 @@ GLuint HUD::cargarTexturaCarta(const char* archivo) {
     FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilename(archivo);
     FIBITMAP* bitmap = FreeImage_Load(fif, archivo);
     bitmap = FreeImage_ConvertTo32Bits(bitmap);
-    FreeImage_FlipVertical(bitmap); 
+    FreeImage_FlipVertical(bitmap);
     this->carta_w = FreeImage_GetWidth(bitmap);
     this->carta_h = FreeImage_GetHeight(bitmap);
     GLubyte* datos = FreeImage_GetBits(bitmap);
@@ -350,7 +372,7 @@ GLuint HUD::cargarTexturaCarta(const char* archivo) {
     GLuint textura;
     glGenTextures(1, &textura);
     glBindTexture(GL_TEXTURE_2D, textura);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST); 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -363,19 +385,19 @@ GLuint HUD::cargarTexturaCarta(const char* archivo) {
     return textura;
 }
 
-void HUD::set_total_apples(int value){
+void HUD::set_total_apples(int value) {
     this->total_apples = value;
 }
 
-void HUD::cargar_textura_apple(){
+void HUD::cargar_textura_apple() {
     this->apple_texture = cargarTexturaApple("../Dependencias/TexturasHUD/apple.png");
 }
 
-void HUD::cargar_textura_carta(){
+void HUD::cargar_textura_carta() {
     this->carta_texture = cargarTexturaCarta("../Dependencias/TexturasHUD/carta.png");
 }
 
-void HUD::update_remaining_apples(int value){
+void HUD::update_remaining_apples(int value) {
     // Regenerar la textura de manzanas restantes
     if (apple_text_texture) {
         glDeleteTextures(1, &apple_text_texture);

@@ -20,6 +20,8 @@ const int MAX_MAP_HIGH = 100;
 // Settings
 float game_speed = 2.0f; // Speed of the game
 
+bool light = false;
+
 bool textures = true; // Draw textures or not
 
 bool wireframe = false; // Activates wireframe or deactivates it

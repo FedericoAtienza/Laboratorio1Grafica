@@ -9,6 +9,7 @@ ColumnLimit: 0 # Limit lines to 80 characters
 AlignTrailingComments: true # Align trailing comments
 PointerAlignment: Left
 SpaceAfterCStyleCast: true
+SortIncludes: false # Do not sort includes
 BinPackArguments: false # Avoid packing arguments when wrapping
 BinPackParameters: false # Avoid packing parameters when wrapping
 IndentCaseLabels: false # Do not indent case labels
