@@ -6,18 +6,25 @@
 #include <OpenGL/glu.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL_ttf.h>
 #else
-#include "FreeImage.h"
 #include "SDL.h"
 #include "SDL_opengl.h"
+#include "SDL_ttf.h"
+#include "FreeImage.h"
 #include <GL/glu.h>
 #endif
 
 #include "camera.h"
+#include "hud.h"
 #include "skybox.h"
 #include "variables.h"
+#include "worm.h"
 
 using namespace std;
+
+int window_width = 800;
+int window_height = 600;
 
 int main(int argc, char* argv[]) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -28,17 +35,22 @@ int main(int argc, char* argv[]) {
     SDL_Window* win = SDL_CreateWindow("Apple Worm",
                                        SDL_WINDOWPOS_CENTERED,
                                        SDL_WINDOWPOS_CENTERED,
-                                       800,
-                                       600,
+                                       window_width,
+                                       window_height,
                                        SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
     SDL_GLContext context = SDL_GL_CreateContext(win);
+    glEnable(GL_TEXTURE_2D);
 
+    if (TTF_Init() == -1) {
+        printf("Error al inicializar SDL_ttf: %s\n", TTF_GetError());
+        exit(1);
+    }
     glMatrixMode(GL_PROJECTION);
 
     float color = 0.0f;
     glClearColor(color, color, color, 1.0f);
 
-    gluPerspective(45, 800 / 600.f, 0.1, 2500);
+    gluPerspective(45, (float) (window_width / window_height), 0.1, 2500);
     glEnable(GL_DEPTH_TEST);
     glMatrixMode(GL_MODELVIEW);
 
@@ -59,6 +71,14 @@ int main(int argc, char* argv[]) {
 
     loadModels();
 
+    Worm worm({0, 1});
+
+    /* INICIALIZACION HUD */
+    int cantManzanas = level_map.apple_quantity();
+    int cantManzanasComidas = 0; // Inicialmente 0
+    int level_number = level_map.level_number();
+    HUD my_hud = HUD(cantManzanas, level_number);
+
     Mix_PlayMusic(music, 0);
 
     do {
@@ -68,6 +88,12 @@ int main(int argc, char* argv[]) {
         deltaTime = (frame_actual - frame_previo) / 1000.0f;
         // Tiempo del frame "previo" se transforma en el frame que se acabo de dibujar, asi el "actual" sera el siguiente
         frame_previo = frame_actual;
+
+        my_hud.update_time(deltaTime);
+
+        cantManzanasComidas = level_map.apple_quantity();
+        my_hud.update_remaining_apples(cantManzanas - cantManzanasComidas);
+        // my_hud.update_speed(nueva_speed);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
@@ -83,6 +109,8 @@ int main(int argc, char* argv[]) {
 
         // Dibujo el mapa
         level_map.draw();
+
+        my_hud.draw();
 
         while (SDL_PollEvent(&evento)) {
             switch (evento.type) {
