@@ -102,7 +102,7 @@ int main(int argc, char* argv[]) {
 
         cantManzanasComidas = level_map.apple_quantity();
         my_hud.update_remaining_apples(cantManzanas - cantManzanasComidas);
-        // my_hud.update_speed(nueva_speed);
+        my_hud.update_speed(game_speed);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();

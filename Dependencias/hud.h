@@ -60,6 +60,7 @@ class HUD {
 
     // Para el game speed
     void create_speed_text(const char* text);
+    void update_speed(float spd);
 
     // Para el nivel
     void create_level_text(const char* text);
@@ -195,6 +196,18 @@ void HUD::update_time(float delta_time) {
     }
 
     create_time_text(ss.str().c_str());
+}
+
+void HUD::update_speed(float spd){
+    this->speed_number = spd/2;
+    if (speed_texture){
+        glDeleteTextures(1, &speed_texture);
+    }
+
+    std::ostringstream ss;
+    ss << "Speed: x " << std::fixed << std::setprecision(0) << speed_number;
+
+    create_speed_text(ss.str().c_str());
 }
 
 void HUD::draw() {
