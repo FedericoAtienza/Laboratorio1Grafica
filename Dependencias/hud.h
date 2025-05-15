@@ -182,10 +182,12 @@ void HUD::create_speed_text(const char* text) {
 }
 
 void HUD::update_time(float delta_time) {
-    // Aumenta el tiempo total acumulado
-    time_elapsed += delta_time;
-    color_timer += delta_time;
-
+    if (!pause){
+        // Aumenta el tiempo total acumulado
+        time_elapsed += delta_time;
+        color_timer += delta_time;
+    }
+    
     // Se convierte todo el tiempo el string a dibujar segun el tiempo elapsed
     std::ostringstream ss;
     ss << "Time: " << std::fixed << std::setprecision(0) << time_elapsed;
