@@ -187,11 +187,9 @@ void HUD::create_speed_text(const char* text) {
 }
 
 void HUD::update_time() {
-    if (!pause) {
-        // Aumenta el tiempo total acumulado
-        time_elapsed += deltaTime;
-        color_timer += deltaTime;
-    }
+    // Aumenta el tiempo total acumulado
+    time_elapsed += deltaTime;
+    color_timer += deltaTime;
 
     // Se convierte todo el tiempo el string a dibujar segun el tiempo elapsed
     std::ostringstream ss;

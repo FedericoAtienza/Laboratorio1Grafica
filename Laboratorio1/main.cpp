@@ -86,6 +86,11 @@ int main(int argc, char* argv[]) {
         // Tiempo del frame "previo" se transforma en el frame que se acabo de dibujar, asi el "actual" sera el siguiente
         frame_previo = frame_actual;
 
+        if (pause) {
+            // Si el juego esta en pausa, no se actualiza el tiempo
+            deltaTime = 0.0f;
+        }
+
         my_hud.update();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -116,10 +121,29 @@ int main(int argc, char* argv[]) {
         }
 
         while (SDL_PollEvent(&evento)) {
+            if (!pause) {
+                switch (evento.type) {
+                case SDL_MOUSEMOTION:
+                    camera.handleMouseMotion(evento.motion.xrel, evento.motion.yrel);
+                    break;
+                case SDL_KEYUP:
+                    switch (evento.key.keysym.sym) {
+                    case SDLK_UP:
+                        worm.move_up();
+                        break;
+                    case SDLK_DOWN:
+                        worm.move_down();
+                        break;
+                    case SDLK_LEFT:
+                        worm.move_left();
+                        break;
+                    case SDLK_RIGHT:
+                        worm.move_right();
+                        break;
+                    }
+                }
+            }
             switch (evento.type) {
-            case SDL_MOUSEMOTION:
-                camera.handleMouseMotion(evento.motion.xrel, evento.motion.yrel);
-                break;
             case SDL_QUIT:
                 fin = true;
                 break;
@@ -130,18 +154,6 @@ int main(int argc, char* argv[]) {
                     break;
                 case SDLK_q:
                     fin = true;
-                    break;
-                case SDLK_UP:
-                    worm.move_up();
-                    break;
-                case SDLK_DOWN:
-                    worm.move_down();
-                    break;
-                case SDLK_LEFT:
-                    worm.move_left();
-                    break;
-                case SDLK_RIGHT:
-                    worm.move_right();
                     break;
                 case SDLK_l:
                     settings.switch_light();

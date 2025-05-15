@@ -232,34 +232,20 @@ class Settings {
 
         if (pause) {
             Mix_ResumeMusic();
-            pause_end = SDL_GetTicks();
-            if (worm.animation_start_time < pause_init) {
-                deltaPause = pause_end - pause_init;
-            } else {
-                deltaPause = 0;
-            }
             pause = false;
         } else {
             Mix_PauseMusic();
-            pause_init = SDL_GetTicks();
             pause = true;
         }
     }
 
     void switch_opciones() {
         if (opciones) {
-            opciones = false;
             Mix_ResumeMusic();
-            pause_end = SDL_GetTicks();
-            if (worm.animation_start_time < pause_init) {
-                deltaPause = pause_end - pause_init;
-            } else {
-                deltaPause = 0;
-            }
+            opciones = false;
             pause = false;
         } else if (!pause) {
             Mix_PauseMusic();
-            pause_init = SDL_GetTicks();
             opciones = true;
             pause = true;
         }

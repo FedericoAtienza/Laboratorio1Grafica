@@ -34,10 +34,6 @@ bool fullscreen = false;
 
 bool opciones = false;
 
-Uint32 pause_init = 0;
-Uint32 pause_end = 0;
-Uint32 deltaPause = 0; // Variable used for calculating elapsed time between pause and resume
-
 // Audio
 int audio = Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048); // Initialize audio
 

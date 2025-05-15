@@ -15,14 +15,12 @@
 #define WORM_H
 
 class Worm {
-  public:
-    Uint32 animation_start_time;
-
   private:
     Point* head;
     Point body[WORM_MAX_LENGTH];
     int body_length;
     bool animation;
+    float animation_progress;
     float animation_duration; // in seconds (with game speed 1)
     Point animation_start_body[WORM_MAX_LENGTH];
     Point animation_end_body[WORM_MAX_LENGTH];
@@ -52,7 +50,7 @@ class Worm {
     void animation_start_moving(Point next_position) {
         animation = true;
         animation_duration = 0.5f;
-        animation_start_time = frame_actual;
+        animation_progress = 0.0f;
         animation_start_body[0] = body[0];
         animation_end_body[0] = next_position;
         for (int i = 1; i < body_length; i++) {
@@ -64,7 +62,7 @@ class Worm {
     void animation_start_falling(int distance) {
         animation = true;
         animation_duration = 0.5f * distance;
-        animation_start_time = frame_actual;
+        animation_progress = 0.0f;
         for (int i = 0; i < body_length; i++) {
             animation_start_body[i] = body[i];
             animation_end_body[i].x = body[i].x;
@@ -73,11 +71,9 @@ class Worm {
     }
 
     // Calculates the progress of the animation, returning a value between 0 (start) and 1 (end)
-    float animation_calculate_progress() {
-        float miliseconds = 1000.0f;
-        Uint32 elapsed_time = frame_actual - deltaPause - animation_start_time;
-        float elapsed_time_in_seconds = elapsed_time / miliseconds;
-        return (float) elapsed_time_in_seconds / animation_duration * game_speed;
+    void animation_calculate_progress() {
+        float progress = (float) deltaTime / animation_duration * game_speed;
+        animation_progress += progress;
     }
 
     void animation_move(float animation_progress) {
@@ -95,17 +91,14 @@ class Worm {
     }
 
     void animation_handler() {
-        if (!pause) {
-            float animation_progress = animation_calculate_progress();
-            if (animation_progress >= 1.0f) {
-                animation_progress = 1.0f;
-            }
-            animation_move(animation_progress);
-            if (animation_progress == 1.0f) {
-                animation = false;
-                deltaPause = 0;
-                handle_is_not_supported();
-            }
+        animation_calculate_progress();
+        if (animation_progress >= 1.0f) {
+            animation_progress = 1.0f;
+        }
+        animation_move(animation_progress);
+        if (animation_progress == 1.0f) {
+            animation = false;
+            handle_is_not_supported();
         }
     }
 
@@ -115,10 +108,6 @@ class Worm {
     }
 
     bool is_allowed_to_move(Point move_to) {
-        // Check if game is paused
-        if (pause)
-            return false;
-
         // Check if is doing the animation
         if (animation)
             return false;
