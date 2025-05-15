@@ -80,8 +80,6 @@ int main(int argc, char* argv[]) {
     Settings settings;
     settings.init_settings();
 
-    Worm worm({0, 1});
-
     /* INICIALIZACION HUD */
     int cantManzanas = level_map.apple_quantity();
     int cantManzanasComidas = 0; // Inicialmente 0
