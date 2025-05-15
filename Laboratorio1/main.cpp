@@ -20,7 +20,6 @@
 #include "skybox.h"
 #include "settings.h"
 #include "variables.h"
-#include "worm.h"
 
 using namespace std;
 
@@ -59,12 +58,6 @@ int main(int argc, char* argv[]) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    bool fin = false;
-    bool fullscreen = false;
-    bool opciones = false;
-
-    bool wireframeActivado = false;
-    bool sombreadoInterpolado = true;
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glShadeModel(GL_SMOOTH);
 
@@ -78,15 +71,12 @@ int main(int argc, char* argv[]) {
     loadModels();
 
     Settings settings;
-    settings.init_settings();
 
-    /* INICIALIZACION HUD */
-    int cantManzanas = level_map.apple_quantity();
-    int cantManzanasComidas = 0; // Inicialmente 0
-    int level_number = level_map.level_number();
-    HUD my_hud = HUD(cantManzanas, level_number);
+    HUD my_hud;
 
     Mix_PlayMusic(music, 0);
+
+    bool fin = false;
 
     do {
         // Cuanto tardo en procesar el frame
@@ -96,20 +86,15 @@ int main(int argc, char* argv[]) {
         // Tiempo del frame "previo" se transforma en el frame que se acabo de dibujar, asi el "actual" sera el siguiente
         frame_previo = frame_actual;
 
-        my_hud.update_time(deltaTime);
-
-        cantManzanasComidas = level_map.apple_quantity();
-        my_hud.update_remaining_apples(cantManzanas - cantManzanasComidas);
-        my_hud.update_speed(game_speed);
+        my_hud.update();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
+
         camera.setViewMatrix();
 
         // Dibujo la skybox
-        glPushMatrix();
         DrawSkybox(1000.0f);
-        glPopMatrix();
 
         // Dibujo el worm
         worm.draw();
@@ -121,23 +106,12 @@ int main(int argc, char* argv[]) {
         if (wireframe) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             my_hud.draw();
+            settings.draw_settings();
+            settings.draw_pause();
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         } else {
             my_hud.draw();
-        }
-        // Dibujo las opciones
-        if (opciones) {
-            if (wireframe) {
-                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                settings.draw_settings();
-                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            } else {
-                settings.draw_settings();
-            }
-        }
-
-        // Dibujo la pausa
-        if (pause && !opciones) {
+            settings.draw_settings();
             settings.draw_pause();
         }
 
@@ -146,128 +120,60 @@ int main(int argc, char* argv[]) {
             case SDL_MOUSEMOTION:
                 camera.handleMouseMotion(evento.motion.xrel, evento.motion.yrel);
                 break;
-            case SDL_KEYDOWN:
-                switch (evento.key.keysym.sym) {
-                case SDLK_UP:
-                    if (!opciones && !pause)
-                        worm.move_up();
-                    break;
-                case SDLK_DOWN:
-                    if (!opciones && !pause)
-                        worm.move_down();
-                    break;
-                case SDLK_LEFT:
-                    if (!opciones && !pause)
-                        worm.move_left();
-                    break;
-                case SDLK_RIGHT:
-                    if (!opciones && !pause)
-                        worm.move_right();
-                    break;
-                case SDLK_ESCAPE:
-                    fin = true;
-                    break;
-                }
-                break;
             case SDL_QUIT:
                 fin = true;
                 break;
             case SDL_KEYUP:
                 switch (evento.key.keysym.sym) {
-                case SDLK_l:
-                    if (light) {
-                        light = false;
-                    } else {
-                        light = true;
-                    }
-                    break;
-                case SDLK_x:
-                    if (wireframe) {
-                        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                        wireframe = false;
-                    } else {
-                        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                        wireframe = true;
-                    }
-                    break;
-                case SDLK_z:
-                    if (shadeFlat) {
-                        shadeFlat = false;
-                        glShadeModel(GL_SMOOTH);
-                    } else {
-                        shadeFlat = true;
-                        glShadeModel(GL_FLAT);
-                    }
-                    break;
-                case SDLK_t:
-                    if (textures) {
-                        textures = false;
-                    } else {
-                        textures = true;
-                    }
-                    break;
-                case SDLK_RETURN:
-                    if (opciones) {
-                        opciones = false;
-                        Mix_ResumeMusic();
-                        pause_end = SDL_GetTicks();
-                        if (worm.animation_start_time < pause_init) {
-                            deltaPause = pause_end - pause_init;
-                        } else {
-                            deltaPause = 0;
-                        }
-                        pause = false;
-                    } else if (!pause) {
-                        Mix_PauseMusic();
-                        pause_init = SDL_GetTicks();
-                        opciones = true;
-                        pause = true;
-                    }
-                    break;
-                case SDLK_v:
-                    if (game_speed == 2.0f) {
-                        game_speed = 4.0f;
-                    } else if (game_speed == 4.0f) {
-                        game_speed = 8.0f;
-                    } else {
-                        game_speed = 2.0f;
-                    }
-                    break;
-                case SDLK_f:
-                    if (!fullscreen) {
-                        SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN);
-                        fullscreen = true;
-                    } else {
-                        SDL_SetWindowFullscreen(win, 0);
-                        fullscreen = false;
-                    }
+                case SDLK_ESCAPE:
+                    fin = true;
                     break;
                 case SDLK_q:
                     fin = true;
                     break;
+                case SDLK_UP:
+                    worm.move_up();
+                    break;
+                case SDLK_DOWN:
+                    worm.move_down();
+                    break;
+                case SDLK_LEFT:
+                    worm.move_left();
+                    break;
+                case SDLK_RIGHT:
+                    worm.move_right();
+                    break;
+                case SDLK_l:
+                    settings.switch_light();
+                    break;
+                case SDLK_x:
+                    settings.switch_wireframe();
+                    break;
+                case SDLK_z:
+                    settings.switch_shadeModel();
+                    break;
+                case SDLK_t:
+                    settings.switch_textures();
+                    break;
+                case SDLK_RETURN:
+                    settings.switch_opciones();
+                    break;
+                case SDLK_v:
+                    settings.switch_speed();
+                    break;
+                case SDLK_f:
+                    settings.switch_fullscreen(win);
+                    break;
                 case SDLK_p:
-                    if (!opciones) {
-                        if (pause) {
-                            Mix_ResumeMusic();
-                            pause_end = SDL_GetTicks();
-                            if (worm.animation_start_time < pause_init) {
-                                deltaPause = pause_end - pause_init;
-                            } else {
-                                deltaPause = 0;
-                            }
-                            pause = false;
-                        } else {
-                            Mix_PauseMusic();
-                            pause_init = SDL_GetTicks();
-                            pause = true;
-                        }
-                    }
+                    settings.switch_pause();
                     break;
                 case SDLK_c:
                     camera.changeCameraType();
                     break;
                 }
+                break;
             }
+            break;
         }
 
         camera.handleMovementKeys();

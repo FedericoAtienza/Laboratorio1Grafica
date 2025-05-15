@@ -18,7 +18,7 @@ const int WORM_MAX_LENGTH = 100; // Maximum length of the worm
 const int MAX_MAP_HIGH = 100;
 
 // Settings
-float game_speed = 2.0f; // Speed of the game
+float game_speed = 1.0f; // Speed of the game
 
 bool light = false;
 
@@ -29,6 +29,11 @@ bool wireframe = false; // Activates wireframe or deactivates it
 bool shadeFlat = false; // Defines shade model to be flat or smooth
 
 bool pause = false; // Pause or resume game
+
+bool fullscreen = false;
+
+bool opciones = false;
+
 Uint32 pause_init = 0;
 Uint32 pause_end = 0;
 Uint32 deltaPause = 0; // Variable used for calculating elapsed time between pause and resume

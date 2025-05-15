@@ -1,3 +1,6 @@
+#include "variables.h"
+#include "map_variable.h"
+
 #ifndef HUD_H
 #define HUD_H
 
@@ -41,14 +44,14 @@ class HUD {
     GLuint cargarTexturaCarta(const char* archivo);
 
   public:
-    HUD(int apple_total, int lvl_number);
+    HUD();
     ~HUD();
 
     // Para el tiempo
     void cargar_fuente_time(const char* ruta, int tamano); // Carga this->time_font desde archivo
     void create_time_text(const char* text);
     void set_time_text_color(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha); // no uso pero lo dejo mientras
-    void update_time(float delta_time);
+    void update_time();
 
     // Para las manzanas
     void cargar_fuente_apple(const char* ruta, int tamano);
@@ -56,11 +59,11 @@ class HUD {
     void create_apple_text(const char* text);                          // Despues hacer una sola para ambos
     void set_apple_text_color(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha); // no uso pero lo dejo mientras
     void set_total_apples(int value);
-    void update_remaining_apples(int valor);
+    void update_remaining_apples();
 
     // Para el game speed
     void create_speed_text(const char* text);
-    void update_speed(float spd);
+    void update_speed();
 
     // Para el nivel
     void create_level_text(const char* text);
@@ -71,15 +74,17 @@ class HUD {
     // Dibuja todo
     void draw();
 
+    void update();
+
     // NO IMPLEMENTADO AUN
     void reset(); // Por si pierde, ahi se detectaria y se invoca reset
 };
 
-HUD::HUD(int apple_total, int lvl_number) {
+HUD::HUD() {
     std::cout << "Inicializando HUD..." << std::endl;
-    level_number = lvl_number;
+    level_number = level_map.level_number();
     speed_number = 1;
-    total_apples = apple_total;
+    total_apples = level_map.apple_quantity();
     eaten_apples = 0;
     time_elapsed = 0.0f;
     time_color = {205, 133, 63, 255};
@@ -181,13 +186,13 @@ void HUD::create_speed_text(const char* text) {
     this->speed_texture = crear_textura_texto(text, this->speed_font, this->speed_color, this->speed_w, this->speed_h);
 }
 
-void HUD::update_time(float delta_time) {
-    if (!pause){
+void HUD::update_time() {
+    if (!pause) {
         // Aumenta el tiempo total acumulado
-        time_elapsed += delta_time;
-        color_timer += delta_time;
+        time_elapsed += deltaTime;
+        color_timer += deltaTime;
     }
-    
+
     // Se convierte todo el tiempo el string a dibujar segun el tiempo elapsed
     std::ostringstream ss;
     ss << "Time: " << std::fixed << std::setprecision(0) << time_elapsed;
@@ -200,9 +205,9 @@ void HUD::update_time(float delta_time) {
     create_time_text(ss.str().c_str());
 }
 
-void HUD::update_speed(float spd){
-    this->speed_number = spd/2;
-    if (speed_texture){
+void HUD::update_speed() {
+    this->speed_number = game_speed;
+    if (speed_texture) {
         glDeleteTextures(1, &speed_texture);
     }
 
@@ -412,17 +417,28 @@ void HUD::cargar_textura_carta() {
     this->carta_texture = cargarTexturaCarta("../Dependencias/TexturasHUD/carta.png");
 }
 
-void HUD::update_remaining_apples(int value) {
+void HUD::update_remaining_apples() {
     // Regenerar la textura de manzanas restantes
     if (apple_text_texture) {
         glDeleteTextures(1, &apple_text_texture);
     }
 
-    this->eaten_apples = value;
+    this->eaten_apples = this->total_apples - level_map.apple_quantity();
 
     std::ostringstream ss;
     ss << eaten_apples << "/" << total_apples;
     create_apple_text(ss.str().c_str());
+}
+
+void HUD::update() {
+    // Actualizar el tiempo
+    update_time();
+
+    // Actualizar las manzanas restantes
+    update_remaining_apples();
+
+    // Actualizar la velocidad
+    update_speed();
 }
 
 #endif
