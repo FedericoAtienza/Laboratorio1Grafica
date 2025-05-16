@@ -25,7 +25,7 @@ class Map {
     std::vector<Point> cargarUbicaciones(const std::string& filename);
 
   public:
-    Map();
+    Map(int nivel);
 
     int get_distance_to_ground(Point p);
 
@@ -44,8 +44,9 @@ class Map {
     int level_number();
 };
 
-Map::Map() {
-    cargarUbicaciones("../Dependencias/level1.txt");
+Map::Map(int nivel) {
+    std::string load_level = "../Dependencias/level" + std::to_string(nivel) + ".txt";
+    cargarUbicaciones(load_level);
 }
 
 int Map::get_distance_to_ground(Point p) {

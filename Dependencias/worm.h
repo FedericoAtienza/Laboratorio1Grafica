@@ -24,6 +24,7 @@ class Worm {
     float animation_duration; // in seconds (with game speed 1)
     Point animation_start_body[WORM_MAX_LENGTH];
     Point animation_end_body[WORM_MAX_LENGTH];
+    bool exit;
 
     bool is_worm_body_in_point(Point p) {
         for (int i = 0; i < body_length; i++) {
@@ -128,7 +129,28 @@ class Worm {
         }
 
         if (level_map.is_exit_in_point(move_to)) {
-            std::cout << "ENTRASTE A SALIDA!" << std::endl;
+            // Levanto un flag diciendo que estoy para salir
+            this->exit = true;
+            // Esto debe disparar un cambio de nivel
+            // Cambio de nivel:
+            // 1. Dispara pequeña "animacion" en pantalla que diga _next level!_
+            //    se carga nivel nuevo y se dibuja
+            //    para eso, borro en map anterior y lo vuelvo a construir? o hago un metodo cambiar nivel?
+            // 2. Dispara funcion que hace que se re construya mapa
+            //    elijo re construirlo en vez de usar alguna funcion para cargar lo nuevo porque
+            //    reseteo gusano
+
+            /*
+            int level_now = level_map.level_number();
+            level = level_now + 1;
+            std::string load_level = "../Dependencias/level" + std::to_string(level) + ".txt";
+            std::cout << "Se cambiara a nivel: " << load_level << std::endl;
+            level_map = Map(level);
+            */
+            //worm = Worm({0,1});  // posición inicial del gusano en el nuevo mapa
+            
+
+
         }
 
         return true;
@@ -170,6 +192,25 @@ class Worm {
         this->body[0] = head;
         this->head = &this->body[0];
         this->body[1] = {head.x - 1, head.y};
+        this->exit = false;
+    }
+
+    void reset(Point new_head) {
+        this->body_length = 2;
+        this->body[0] = new_head;
+        this->head = &this->body[0];
+        this->body[1] = {new_head.x - 1, new_head.y};
+        this->animation = false;
+        this->animation_progress = 0.0f;
+        this->exit = false;
+    }
+
+    bool to_exit(){
+        if (this->exit) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     void move_right() {

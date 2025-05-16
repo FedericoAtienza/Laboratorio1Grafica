@@ -20,6 +20,7 @@
 #include "skybox.h"
 #include "settings.h"
 #include "variables.h"
+#include "level_manager.h"
 
 using namespace std;
 
@@ -74,6 +75,8 @@ int main(int argc, char* argv[]) {
 
     HUD my_hud;
 
+    LevelManager level_manager;
+
     Mix_PlayMusic(music, 0);
 
     bool fin = false;
@@ -106,6 +109,12 @@ int main(int argc, char* argv[]) {
 
         // Dibujo el mapa
         level_map.draw();
+
+        // Controlo si debo involar al level manager
+        if (worm.to_exit()){
+            level_manager.next_level(win);
+            worm.reset({0,1}); // Aca le paso la nueva posicion inicial ESTO DEBO VERLO
+        }
 
         // Dibujo el HUD
         if (wireframe) {
