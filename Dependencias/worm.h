@@ -213,6 +213,10 @@ class Worm {
         }
     }
 
+    void saliste(){
+        this->exit = false; 
+    }
+
     void move_right() {
         Point next_position = {head->x + 1, head->y};
         move_to(next_position);

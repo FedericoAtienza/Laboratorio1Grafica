@@ -110,10 +110,21 @@ int main(int argc, char* argv[]) {
         // Dibujo el mapa
         level_map.draw();
 
+        // Animacion next level
+        level_manager.update_animation(deltaTime);
+
+        if (level_manager.is_animating()) {
+            level_manager.draw_animation_1();
+            level_manager.draw_animation_2();
+
+        }
+
         // Controlo si debo involar al level manager
         if (worm.to_exit()){
-            level_manager.next_level(win);
-            worm.reset({0,1}); // Aca le paso la nueva posicion inicial ESTO DEBO VERLO
+            level_manager.start_animation();
+            worm.saliste();
+            //level_manager.next_level(win);
+            //worm.reset({0,1}); // Aca le paso la nueva posicion inicial ESTO DEBO VERLO
         }
 
         // Dibujo el HUD
