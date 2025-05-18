@@ -37,11 +37,21 @@ class HUD {
     GLuint carta_texture;
     int carta_w, carta_h;
 
+    // Textura cambio nivel
+    TTF_Font* next_level_font;
+    GLuint next_level_texture;
+    SDL_Color next_level_color;
+    int next_level_w, next_level_h;
+    bool show_next; // Para indicar si dibujo next level o no
+    GLuint next_level_frame;
+    int next_level_frame_w, next_level_frame_h;
+
     GLuint crear_textura_texto(const char* texto, TTF_Font* fuente, SDL_Color color, int& w, int& h);
     TTF_Font* cargar_fuente(const char* ruta, int tamano);
 
     GLuint cargarTexturaApple(const char* archivo);
     GLuint cargarTexturaCarta(const char* archivo);
+    GLuint cargarTexturaNextLevelFrame(const char* archivo);
 
   public:
     HUD();
@@ -76,6 +86,12 @@ class HUD {
 
     void update();
 
+    // Para textura de cambio de nivel
+    void create_next_level_text(const char* text);
+    void show_next_level();
+    void hide_next_level();
+    void cargar_textura_next_level_frame();
+
     // NO IMPLEMENTADO AUN
     void reset(); // Por si pierde, ahi se detectaria y se invoca reset
 };
@@ -102,6 +118,11 @@ HUD::HUD() {
     create_speed_text(speed.c_str());
     cargar_textura_apple();
     cargar_textura_carta();
+    cargar_textura_next_level_frame();
+    next_level_font = cargar_fuente("../Dependencias/Fonts/royal-acidbath/Royalacid_o.ttf", 48);
+
+    create_next_level_text("WELL DONE!");
+    next_level_color = {255, 255, 255, 255};
 }
 
 HUD::~HUD() {
@@ -184,6 +205,26 @@ void HUD::create_level_text(const char* text) {
 
 void HUD::create_speed_text(const char* text) {
     this->speed_texture = crear_textura_texto(text, this->speed_font, this->speed_color, this->speed_w, this->speed_h);
+}
+
+void HUD::create_next_level_text(const char* text){
+    if (!text) {
+        printf("text es NULL\n");
+    }
+    if (!this->next_level_font) {
+        printf("Fuente es NULL\n");
+    }
+    printf("Color: (%d, %d, %d, %d)\n", this->next_level_color.r, this->next_level_color.g, this->next_level_color.b, this->next_level_color.a);
+    printf("Ancho: %d, Alto: %d\n", this->next_level_w, this->next_level_h);
+    this->next_level_texture = crear_textura_texto(text, this->next_level_font, this->next_level_color, this->next_level_w, this->next_level_h);
+}
+
+void HUD::show_next_level(){
+    this->show_next = true;
+}
+
+void HUD::hide_next_level(){
+    this->show_next = false;
 }
 
 void HUD::update_time() {
@@ -298,7 +339,7 @@ void HUD::draw() {
     glVertex2f(x, y + speed_h);
     glEnd();
 
-    // 4. Dibujo apple y apple_text
+    // 4.1. Dibujo apple
     y += speed_h + separacion;
     int desired_width_apple = 50; // tamaño en pantalla de la manzana
     int desired_height_apple = 50;
@@ -315,6 +356,7 @@ void HUD::draw() {
     glVertex2f(x, y + desired_height_apple);
     glEnd();
 
+    // 4.2. Dibujo apple text
     x += desired_width_apple;
     y += (desired_height_apple - apple_h) / 2;
     glEnable(GL_TEXTURE_2D);
@@ -329,6 +371,39 @@ void HUD::draw() {
     glTexCoord2f(0, 1);
     glVertex2f(x, y + apple_h);
     glEnd();
+
+    // 5. Si corresponde, dibujo mensaje de next level y su marco
+    if (show_next) {
+        int next_level_frame_w = 500;
+        int next_level_frame_h = 133;
+        x = -15;
+        y = 450;
+
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, next_level_frame);
+        glBegin(GL_QUADS);
+            glTexCoord2f(0, 0); glVertex2f(x, y);
+            glTexCoord2f(1, 0); glVertex2f(x + next_level_frame_w, y);
+            glTexCoord2f(1, 1); glVertex2f(x + next_level_frame_w, y + next_level_frame_h);
+            glTexCoord2f(0, 1); glVertex2f(x, y + next_level_frame_h);
+        glEnd();
+
+        x = 10;
+        y = 485;
+        
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, next_level_texture);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0, 0);
+        glVertex2f(x, y);
+        glTexCoord2f(1, 0);
+        glVertex2f(x + next_level_w, y);
+        glTexCoord2f(1, 1);
+        glVertex2f(x + next_level_w, y + next_level_h);
+        glTexCoord2f(0, 1);
+        glVertex2f(x, y + next_level_h);
+        glEnd();
+    }
 
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
@@ -403,6 +478,36 @@ GLuint HUD::cargarTexturaCarta(const char* archivo) {
     return textura;
 }
 
+GLuint HUD::cargarTexturaNextLevelFrame(const char* archivo) {
+    // Inicializar FreeImage
+    FreeImage_Initialise();
+
+    // -> CARGAR IMAGEN
+    FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilename(archivo);
+    FIBITMAP* bitmap = FreeImage_Load(fif, archivo);
+    bitmap = FreeImage_ConvertTo32Bits(bitmap);
+    FreeImage_FlipVertical(bitmap);
+    this->next_level_frame_w = FreeImage_GetWidth(bitmap);
+    this->next_level_frame_h = FreeImage_GetHeight(bitmap);
+    GLubyte* datos = FreeImage_GetBits(bitmap);
+
+    // -> CREAR LA TEXTURA EN OPENGL
+    GLuint textura;
+    glGenTextures(1, &textura);
+    glBindTexture(GL_TEXTURE_2D, textura);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, this->next_level_frame_w, this->next_level_frame_h, GL_BGRA, GL_UNSIGNED_BYTE, datos);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+    FreeImage_Unload(bitmap);
+    FreeImage_DeInitialise();
+
+    return textura;
+}
+
 void HUD::set_total_apples(int value) {
     this->total_apples = value;
 }
@@ -413,6 +518,10 @@ void HUD::cargar_textura_apple() {
 
 void HUD::cargar_textura_carta() {
     this->carta_texture = cargarTexturaCarta("../Dependencias/TexturasHUD/carta.png");
+}
+
+void HUD::cargar_textura_next_level_frame(){ // SEGUIR ESTO
+    this->next_level_frame = cargarTexturaNextLevelFrame("../Dependencias/TexturasHUD/banner.png");
 }
 
 void HUD::update_remaining_apples() {

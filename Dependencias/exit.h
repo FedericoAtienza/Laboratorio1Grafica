@@ -16,6 +16,8 @@ class Exit {
 
     bool is_in(Point p);
 
+    Point get_position();
+
     void draw();
 };
 
@@ -38,6 +40,10 @@ void Exit::draw() {
     glColor3f(0.55f, 0.27f, 0.07f); 
     drawCube(1.0f);
     glPopMatrix();
+}
+
+Point Exit::get_position(){
+  return position;
 }
 
 #endif

@@ -24,7 +24,7 @@ class Worm {
     float animation_duration; // in seconds (with game speed 1)
     Point animation_start_body[WORM_MAX_LENGTH];
     Point animation_end_body[WORM_MAX_LENGTH];
-    bool exit;
+    bool exit; // indica que esta en salida
 
     bool is_worm_body_in_point(Point p) {
         for (int i = 0; i < body_length; i++) {
@@ -128,29 +128,9 @@ class Worm {
             grow_while_moving();
         }
 
+        // Chequeo si se mueve a la salida  
         if (level_map.is_exit_in_point(move_to)) {
-            // Levanto un flag diciendo que estoy para salir
             this->exit = true;
-            // Esto debe disparar un cambio de nivel
-            // Cambio de nivel:
-            // 1. Dispara pequeña "animacion" en pantalla que diga _next level!_
-            //    se carga nivel nuevo y se dibuja
-            //    para eso, borro en map anterior y lo vuelvo a construir? o hago un metodo cambiar nivel?
-            // 2. Dispara funcion que hace que se re construya mapa
-            //    elijo re construirlo en vez de usar alguna funcion para cargar lo nuevo porque
-            //    reseteo gusano
-
-            /*
-            int level_now = level_map.level_number();
-            level = level_now + 1;
-            std::string load_level = "../Dependencias/level" + std::to_string(level) + ".txt";
-            std::cout << "Se cambiara a nivel: " << load_level << std::endl;
-            level_map = Map(level);
-            */
-            //worm = Worm({0,1});  // posición inicial del gusano en el nuevo mapa
-            
-
-
         }
 
         return true;

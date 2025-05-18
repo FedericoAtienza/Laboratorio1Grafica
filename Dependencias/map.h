@@ -18,6 +18,7 @@ class Map {
     std::vector<Block> blocks;
     std::vector<Apple> apples;
     Exit exit;
+    Point spawn; // Punto de spawn
 
 
     // Esto no se si ira finalmente aca o en otro archivo de utilities
@@ -42,6 +43,10 @@ class Map {
     int apple_quantity();
 
     int level_number();
+
+    Point get_spawn();
+
+    Point get_exit();
 };
 
 Map::Map(int nivel) {
@@ -133,27 +138,39 @@ std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
         char caracter;
         iss >> caracter;
 
-        if (caracter == 'B') {
+        if (caracter == 'B') { // Bloques
             float x, y;
             iss >> x >> y;
             blocks.push_back(Block({x, y}));
-        } else if (caracter == 'M') {
+        } else if (caracter == 'M') { // Manzanas
             float x, y;
             iss >> x >> y;
             apples.push_back(Apple({x, y}));
-        } else if (caracter == 'E') {
+        } else if (caracter == 'E') { // Exit
             float x, y;
             iss >> x >> y;
             exit.set_position({x, y});
-        } else if (caracter == 'L') {
+        } else if (caracter == 'S') { // Posicion de spawn del gusano
+            float x, y;
+            iss >> x >> y;
+            spawn = {x,y};
+        } else if (caracter == 'L') { // Indicador de Level Number
             float x;
             iss >> x;
             this->lvl = x;
-        }
+        } 
     }
 
     file.close();
     return ubicaciones;
+}
+
+Point Map::get_spawn(){
+    return spawn;
+}
+
+Point Map::get_exit(){
+    return exit.get_position();
 }
 
 int Map::apple_quantity() {
