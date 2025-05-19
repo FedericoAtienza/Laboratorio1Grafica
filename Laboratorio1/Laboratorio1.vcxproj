@@ -77,7 +77,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencias;$(SolutionDir)Dependencias/SDL2/include;$(SolutionDir)Dependencias/Freeimage/Dist/x64;$(SolutionDir)Dependencias/assimp;$(SolutionDir)Dependencias/glm;$(SolutionDir)Dependencias/SDL_Mixer/include;$(SolutionDir)Dependencias/SDL2_ttf/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencias;$(SolutionDir)Dependencias/SDL2/include;$(SolutionDir)Dependencias/Freeimage/Dist/x64;$(SolutionDir)Dependencias/assimp;$(SolutionDir)Dependencias/glm;$(SolutionDir)Dependencias/SDL_Mixer/include;$(SolutionDir)Dependencias/SDL2_ttf/include;$(SolutionDir)Dependencias/TinyXML2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -94,7 +94,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencias;$(SolutionDir)Dependencias/SDL2/include;$(SolutionDir)Dependencias/Freeimage/Dist/x64;$(SolutionDir)Dependencias/assimp;$(SolutionDir)Dependencias/glm;$(SolutionDir)Dependencias/SDL_Mixer/include;$(SolutionDir)Dependencias/SDL2_ttf/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencias;$(SolutionDir)Dependencias/SDL2/include;$(SolutionDir)Dependencias/Freeimage/Dist/x64;$(SolutionDir)Dependencias/assimp;$(SolutionDir)Dependencias/glm;$(SolutionDir)Dependencias/SDL_Mixer/include;$(SolutionDir)Dependencias/SDL2_ttf/include;$(SolutionDir)Dependencias/TinyXML2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -111,7 +111,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencias;$(SolutionDir)Dependencias/SDL2/include;$(SolutionDir)Dependencias/Freeimage/Dist/x64;$(SolutionDir)Dependencias/assimp;$(SolutionDir)Dependencias/glm;$(SolutionDir)Dependencias/SDL_Mixer/include;$(SolutionDir)Dependencias/SDL2_ttf/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencias;$(SolutionDir)Dependencias/SDL2/include;$(SolutionDir)Dependencias/Freeimage/Dist/x64;$(SolutionDir)Dependencias/assimp;$(SolutionDir)Dependencias/glm;$(SolutionDir)Dependencias/SDL_Mixer/include;$(SolutionDir)Dependencias/SDL2_ttf/include;$(SolutionDir)Dependencias/TinyXML2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,7 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencias;$(SolutionDir)Dependencias/SDL2/include;$(SolutionDir)Dependencias/Freeimage/Dist/x64;$(SolutionDir)Dependencias/assimp;$(SolutionDir)Dependencias/glm;$(SolutionDir)Dependencias/SDL_Mixer/include;$(SolutionDir)Dependencias/SDL2_ttf/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencias;$(SolutionDir)Dependencias/SDL2/include;$(SolutionDir)Dependencias/Freeimage/Dist/x64;$(SolutionDir)Dependencias/assimp;$(SolutionDir)Dependencias/glm;$(SolutionDir)Dependencias/SDL_Mixer/include;$(SolutionDir)Dependencias/SDL2_ttf/include;$(SolutionDir)Dependencias/TinyXML2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Dependencias\TinyXML2\tinyxml2.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +161,7 @@
     <ClInclude Include="..\Dependencias\settings.h" />
     <ClInclude Include="..\Dependencias\skybox.h" />
     <ClInclude Include="..\Dependencias\text.h" />
+    <ClInclude Include="..\Dependencias\TinyXML2\tinyxml2.h" />
     <ClInclude Include="..\Dependencias\variables.h" />
     <ClInclude Include="..\Dependencias\worm.h" />
     <ClInclude Include="..\Dependencias\worm_variable.h" />

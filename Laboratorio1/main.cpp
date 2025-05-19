@@ -11,11 +11,11 @@
 #include <tinyxml2/tinyxml2.h>
 
 #else
+#include "tinyxml2.h"
 #include "SDL.h"
 #include "SDL_opengl.h"
 #include "SDL_ttf.h"
 #include "FreeImage.h"
-#include "tinyxml2.h"
 #include <GL/glu.h>
 #endif
 

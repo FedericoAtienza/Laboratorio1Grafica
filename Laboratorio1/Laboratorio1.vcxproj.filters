@@ -18,6 +18,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="..\Dependencias\TinyXML2\tinyxml2.cpp">
+      <Filter>Archivos de encabezado</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependencias\skybox.h">
@@ -81,6 +84,9 @@
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependencias\explosive.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencias\TinyXML2\tinyxml2.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>

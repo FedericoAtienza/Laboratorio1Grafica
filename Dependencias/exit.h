@@ -8,7 +8,6 @@ class Exit {
   private:
     Point position;
     float textureYMinCoord, textureYMaxCoord;
-    int positionTexYCoord;
     float animationCounter;
 
   public:
