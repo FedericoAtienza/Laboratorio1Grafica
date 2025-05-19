@@ -16,6 +16,7 @@
 struct Particula {
     float x, y, z;
     float dx, dy, dz;
+    float c1, c2, c3;
 };
 
 class LevelManager{
@@ -61,6 +62,12 @@ void LevelManager::start_animation() {
         p.dz = ((float)rand() / RAND_MAX) * 2.0f - 1.0f;
         particulas.push_back(p);
     }
+
+    for (auto& p : particulas) {
+        p.c1 = ((float)rand() / RAND_MAX);
+        p.c2 = ((float)rand() / RAND_MAX);
+        p.c3 = ((float)rand() / RAND_MAX);
+    }
 }
 
 bool LevelManager::update_animation(float deltaTime) {
@@ -92,10 +99,12 @@ bool LevelManager::update_animation(float deltaTime) {
 void LevelManager::draw_animation_1() {
     if (animating) {
         for (auto& p : particulas) {
-            float r = ((float)rand() / RAND_MAX);
-            float g = ((float)rand() / RAND_MAX);
-            float b = ((float)rand() / RAND_MAX);
-            glColor3f(r,g,b);
+            if (!pause) { // Si estoy animando y no en pausa altero sus colores
+                p.c1 = ((float)rand() / RAND_MAX);
+                p.c2 = ((float)rand() / RAND_MAX);
+                p.c3 = ((float)rand() / RAND_MAX);
+            }
+            glColor3f(p.c1,p.c2,p.c3);
             drawCube(p.x, p.y, p.z, .2f);
         }
     }
@@ -119,7 +128,7 @@ void LevelManager::draw_animation_2() {
 void LevelManager::next_level(){
 
     level += 1; // Aumento el level global 
-    std::string load_level = "../Dependencias/level" + std::to_string(level) + ".txt";
+    std::string load_level = "../Dependencias/level" + std::to_string(level) + ".xml";
     std::cout << "Se cambiara a nivel: " << load_level << std::endl;
     level_map = Map(level);
 }

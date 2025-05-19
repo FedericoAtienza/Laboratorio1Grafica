@@ -7,11 +7,14 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_ttf.h>
+#include <tinyxml2/tinyxml2.h>
+
 #else
 #include "SDL.h"
 #include "SDL_opengl.h"
 #include "SDL_ttf.h"
 #include "FreeImage.h"
+#include "tinyxml2.h"
 #include <GL/glu.h>
 #endif
 
@@ -77,7 +80,7 @@ int main(int argc, char* argv[]) {
 
     LevelManager level_manager;
 
-    Mix_PlayMusic(music, 0);
+   //Mix_PlayMusic(music, 0);
 
     bool fin = false;
 
@@ -126,6 +129,7 @@ int main(int argc, char* argv[]) {
             // Donde spawneara el gusano el prox nivel
             Point spawn = level_map.get_spawn();
             worm.reset({spawn.x, spawn.y}); // Aca le paso la nueva posicion inicial 
+            my_hud.update_level_number();
             my_hud.hide_next_level();
         }
 

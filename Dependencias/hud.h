@@ -77,6 +77,7 @@ class HUD {
 
     // Para el nivel
     void create_level_text(const char* text);
+    void update_level_number();
 
     // Para frame/carta
     void cargar_textura_carta();
@@ -208,15 +209,13 @@ void HUD::create_speed_text(const char* text) {
 }
 
 void HUD::create_next_level_text(const char* text){
-    if (!text) {
-        printf("text es NULL\n");
-    }
-    if (!this->next_level_font) {
-        printf("Fuente es NULL\n");
-    }
-    printf("Color: (%d, %d, %d, %d)\n", this->next_level_color.r, this->next_level_color.g, this->next_level_color.b, this->next_level_color.a);
-    printf("Ancho: %d, Alto: %d\n", this->next_level_w, this->next_level_h);
     this->next_level_texture = crear_textura_texto(text, this->next_level_font, this->next_level_color, this->next_level_w, this->next_level_h);
+}
+
+void HUD::update_level_number(){
+    this->level_number++;
+    std::string lvl = "LEVEL " + std::to_string(level_number);
+    create_level_text(lvl.c_str());
 }
 
 void HUD::show_next_level(){

@@ -11,6 +11,9 @@
 #ifndef MAP_H
 #define MAP_H
 
+using namespace tinyxml2;
+
+
 class Map {
   private:
     /* Componentes del mapa: bloques, manzanas, exit (por ahora) */
@@ -50,7 +53,7 @@ class Map {
 };
 
 Map::Map(int nivel) {
-    std::string load_level = "../Dependencias/level" + std::to_string(nivel) + ".txt";
+    std::string load_level = "../Dependencias/level" + std::to_string(nivel) + ".xml";
     cargarUbicaciones(load_level);
 }
 
@@ -123,6 +126,7 @@ void Map::draw() {
     exit.draw();
 }
 
+/*
 std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
     std::ifstream file(nombreArchivo);
     std::vector<Point> ubicaciones;
@@ -164,6 +168,67 @@ std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
     file.close();
     return ubicaciones;
 }
+*/
+
+
+std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
+    std::vector<Point> ubicaciones;
+
+    XMLDocument doc;
+    XMLError result = doc.LoadFile(nombreArchivo.c_str());
+    if (result != XML_SUCCESS) {
+        std::cerr << "No se pudo abrir el archivo XML: " << nombreArchivo << std::endl;
+        return ubicaciones;
+    }
+
+    XMLElement* root = doc.FirstChildElement("level");
+    if (!root) {
+        std::cerr << "No se encontró el elemento <level> en el archivo XML." << std::endl;
+        return ubicaciones;
+    }
+
+    // Cargar número de nivel
+    root->QueryIntAttribute("number", &this->lvl);
+
+    // Bloques
+    XMLElement* block = root->FirstChildElement("blocks") ?
+                        root->FirstChildElement("blocks")->FirstChildElement("block") : nullptr;
+    while (block) {
+        float x = block->FloatAttribute("x");
+        float y = block->FloatAttribute("y");
+        blocks.push_back(Block({x, y}));
+        block = block->NextSiblingElement("block");
+    }
+
+    // Manzanas
+    XMLElement* apple = root->FirstChildElement("apples") ?
+                        root->FirstChildElement("apples")->FirstChildElement("apple") : nullptr;
+    while (apple) {
+        float x = apple->FloatAttribute("x");
+        float y = apple->FloatAttribute("y");
+        apples.push_back(Apple({x, y}));
+        apple = apple->NextSiblingElement("apple");
+    }
+
+    // Entrada (posición del gusano al iniciar)
+    XMLElement* spawn = root->FirstChildElement("spawn");
+    if (spawn) {
+        float x = spawn->FloatAttribute("x");
+        float y = spawn->FloatAttribute("y");
+        this->spawn = {x,y};
+    }
+
+    // Salida (meta del nivel)
+    XMLElement* exitElement = root->FirstChildElement("exit");
+    if (exitElement) {
+        float x = exitElement->FloatAttribute("x");
+        float y = exitElement->FloatAttribute("y");
+        exit.set_position({x, y});
+    }
+
+    return ubicaciones;
+}
+
 
 Point Map::get_spawn(){
     return spawn;
