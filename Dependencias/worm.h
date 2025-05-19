@@ -10,6 +10,7 @@
 #include "map_variable.h"
 #include "point.h"
 #include "variables.h"
+#include "cube_models.h"
 
 #ifndef WORM_H
 #define WORM_H
@@ -18,12 +19,15 @@ class Worm {
   private:
     Point* head;
     Point body[WORM_MAX_LENGTH];
+    float body_rotation[WORM_MAX_LENGTH];
     int body_length;
     bool animation;
     float animation_progress;
     float animation_duration; // in seconds (with game speed 1)
     Point animation_start_body[WORM_MAX_LENGTH];
+    float animation_start_body_rotation[WORM_MAX_LENGTH];
     Point animation_end_body[WORM_MAX_LENGTH];
+    float animation_end_body_rotation[WORM_MAX_LENGTH];
 
     bool is_worm_body_in_point(Point p) {
         for (int i = 0; i < body_length; i++) {
@@ -47,15 +51,33 @@ class Worm {
         return distance;
     }
 
+    float animation_calculate_rotation(Point start, Point end) {
+        if (start.x == end.x - 1)
+            return 0.0f; // right
+        if (start.x == end.x + 1)
+            return 180.0f; // left
+        if (start.y == end.y - 1)
+            return 90.0f; // up
+        if (start.y == end.y + 1)
+            return 270.0f; // down
+
+        return 0.0f; // default
+    }
+
     void animation_start_moving(Point next_position) {
         animation = true;
         animation_duration = 0.5f;
         animation_progress = 0.0f;
         animation_start_body[0] = body[0];
         animation_end_body[0] = next_position;
+        animation_start_body_rotation[0] = body_rotation[0];
+        animation_end_body_rotation[0] = animation_calculate_rotation(body[0], next_position);
+
         for (int i = 1; i < body_length; i++) {
             animation_start_body[i] = body[i];
             animation_end_body[i] = body[i - 1];
+            animation_start_body_rotation[i] = body_rotation[i];
+            animation_end_body_rotation[i] = body_rotation[i - 1];
         }
     }
 
@@ -67,6 +89,8 @@ class Worm {
             animation_start_body[i] = body[i];
             animation_end_body[i].x = body[i].x;
             animation_end_body[i].y = body[i].y - distance;
+            animation_start_body_rotation[i] = body_rotation[i];
+            animation_end_body_rotation[i] = body_rotation[i];
         }
     }
 
@@ -80,6 +104,18 @@ class Worm {
         for (int i = body_length - 1; i >= 0; i--) {
             body[i].x = (animation_start_body[i].x + animation_progress * (animation_end_body[i].x - animation_start_body[i].x));
             body[i].y = (animation_start_body[i].y + animation_progress * (animation_end_body[i].y - animation_start_body[i].y));
+            float difference = animation_end_body_rotation[i] - animation_start_body_rotation[i];
+            // Normalize the difference between 270 and 0 to be -90 or 90
+            if (difference == -270.0f)
+                difference = 90.0f;
+            if (difference == 270.0f)
+                difference = -90.0f;
+            body_rotation[i] = (animation_start_body_rotation[i] + animation_progress * difference);
+            // Normalize the rotation to be between 0 and 360
+            if (body_rotation[i] >= 360.0f)
+                body_rotation[i] -= 360.0f;
+            if (body_rotation[i] < 0.0f)
+                body_rotation[i] += 360.0f;
         }
     }
 
@@ -144,8 +180,9 @@ class Worm {
     void draw_head() {
         glPushMatrix();
         glTranslatef(head->x, head->y, 0);
+        glRotatef(body_rotation[0], 0.0f, 0.0f, 1.0f);
         glColor3f(1.0f, 0.0f, 1.0f);
-        drawCube(1.0f);
+        drawWormHeadModel(1.0f);
         glPopMatrix();
     }
 
@@ -153,8 +190,13 @@ class Worm {
         for (int i = 1; i < body_length; i++) {
             glPushMatrix();
             glTranslatef(body[i].x, body[i].y, 0);
+            glRotatef(body_rotation[i], 0.0f, 0.0f, 1.0f);
             glColor3f(0.0f, 1.0f, 0.0f);
-            drawCube(0.99f);
+            if (i % 2 == 0) {
+                drawWorm2Model(1.0f);
+            } else {
+                drawWorm1Model(1.0f);
+            }
             glPopMatrix();
         }
     }
@@ -170,6 +212,9 @@ class Worm {
         this->body[0] = head;
         this->head = &this->body[0];
         this->body[1] = {head.x - 1, head.y};
+        this->body_rotation[0] = 0.0f;
+        this->body_rotation[1] = 0.0f;
+        this->animation = false;
     }
 
     void move_right() {

@@ -17,7 +17,6 @@
 
 #include "camera.h"
 #include "hud.h"
-#include "skybox.h"
 #include "settings.h"
 #include "variables.h"
 
@@ -65,10 +64,8 @@ int main(int argc, char* argv[]) {
 
     Camera camera;
 
-    // Carga de datos (imagenes) para poder dibujar la Skybox
-    LoadSkybox();
-
     loadModels();
+    loadCubesTextures();
 
     Settings settings;
 
