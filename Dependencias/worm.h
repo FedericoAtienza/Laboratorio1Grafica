@@ -25,6 +25,9 @@ class Worm {
     Point animation_start_body[WORM_MAX_LENGTH];
     Point animation_end_body[WORM_MAX_LENGTH];
     bool exit; // indica que esta en salida
+    float r_head, g_head, b_head;
+    float r_body, g_body, b_body;
+    float alpha;
 
     bool is_worm_body_in_point(Point p) {
         for (int i = 0; i < body_length; i++) {
@@ -78,10 +81,36 @@ class Worm {
     }
 
     void animation_move(float animation_progress) {
+        bool cayo_al_vacio = false;
         for (int i = body_length - 1; i >= 0; i--) {
             body[i].x = (animation_start_body[i].x + animation_progress * (animation_end_body[i].x - animation_start_body[i].x));
             body[i].y = (animation_start_body[i].y + animation_progress * (animation_end_body[i].y - animation_start_body[i].y));
+            if (body[i].y < -5){
+                cayo_al_vacio = true;
+                break;
+            }
         }
+        if (cayo_al_vacio){
+            muerte_vacio();
+        }
+    }
+
+    void muerte_vacio(){
+        // Aca puedo disparar animacion "fantasma"
+        // Seteo colores fantasmita
+        this->r_head = 0.6;
+        this->g_head = 0.9;
+        this->b_body = 1.0;
+        this->r_body = 0.6;
+        this->g_body = 0.9;
+        this->b_body = 1.0;
+        this->alpha = 0.3;
+        for (int i = 0; i < body_length; i++) {
+            animation_start_body[i] = body[i]; // la posicion actual
+            animation_end_body[i].x = body[i].x; // sin movimiento en x, solo quiero que "flote" para arriba
+            animation_end_body[i].y = body[i].y + 99; // y que se mueva hasta muy arriba por eso sumo 99
+        }
+        animation_progress = 0.0f; // reinicio progreos animacion
     }
 
     void handle_is_not_supported() {
@@ -146,7 +175,8 @@ class Worm {
     void draw_head() {
         glPushMatrix();
         glTranslatef(head->x, head->y, 0);
-        glColor3f(1.0f, 0.0f, 1.0f);
+        //glColor3f(1.0f, 0.0f, 1.0f);
+        glColor4f(this->r_head, this->g_head,this->b_head, this->alpha);
         drawCube(1.0f);
         glPopMatrix();
     }
@@ -155,7 +185,8 @@ class Worm {
         for (int i = 1; i < body_length; i++) {
             glPushMatrix();
             glTranslatef(body[i].x, body[i].y, 0);
-            glColor3f(0.0f, 1.0f, 0.0f);
+            //glColor3f(0.0f, 1.0f, 0.0f);
+            glColor4f(this->r_body, this->g_body,this->b_body, this->alpha);
             drawCube(0.99f);
             glPopMatrix();
         }
@@ -173,6 +204,13 @@ class Worm {
         this->head = &this->body[0];
         this->body[1] = {head.x - 1, head.y};
         this->exit = false;
+        this->r_head = 1.0f;
+        this->g_head = 0.0f;
+        this->b_head = 1.0f;
+        this->r_body = 0.0f;
+        this->g_body = 1.0f;
+        this->b_body = 0.0f;
+        this->alpha = 1.0; // inicialmente opaco
     }
 
     void reset(Point new_head) {
@@ -183,6 +221,13 @@ class Worm {
         this->animation = false;
         this->animation_progress = 0.0f;
         this->exit = false;
+        this->r_head = 1.0f;
+        this->g_head = 0.0f;
+        this->b_head = 1.0f;
+        this->r_body = 0.0f;
+        this->g_body = 1.0f;
+        this->b_body = 0.0f;
+        this->alpha = 1.0; // inicialmente opaco
     }
 
     bool to_exit(){

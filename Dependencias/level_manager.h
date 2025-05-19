@@ -73,7 +73,6 @@ void LevelManager::start_animation() {
 bool LevelManager::update_animation(float deltaTime) {
     if (animating) {
         animation_time += deltaTime;
-        std::cout << "NEXT LVL ANIMATION TIME: " << animation_time << std::endl;
 
         for (auto& p : particulas) {
             p.x += p.dx * deltaTime * 2.0f; // velocidad
