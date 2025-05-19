@@ -214,6 +214,8 @@ void HUD::create_next_level_text(const char* text){
 
 void HUD::update_level_number(){
     this->level_number++;
+    this->eaten_apples = 0;
+    this->total_apples = level_map.apple_quantity();
     std::string lvl = "LEVEL " + std::to_string(level_number);
     create_level_text(lvl.c_str());
 }

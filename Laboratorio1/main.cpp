@@ -129,7 +129,7 @@ int main(int argc, char* argv[]) {
             // Donde spawneara el gusano el prox nivel
             Point spawn = level_map.get_spawn();
             worm.reset({spawn.x, spawn.y}); // Aca le paso la nueva posicion inicial 
-            my_hud.update_level_number();
+            my_hud.update_level_number(); // Actualiza datos del hud correspondientes a sig nivel
             my_hud.hide_next_level();
         }
 
