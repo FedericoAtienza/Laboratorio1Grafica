@@ -182,7 +182,8 @@ class Worm {
         glTranslatef(head->x, head->y, 0);
         glRotatef(body_rotation[0], 0.0f, 0.0f, 1.0f);
         glColor3f(1.0f, 0.0f, 1.0f);
-        drawWormHeadModel(1.0f);
+        glScalef(0.01f, 0.01f, 0.01f);
+        wormHeadModel.Draw(textures, false);
         glPopMatrix();
     }
 
@@ -192,11 +193,7 @@ class Worm {
             glTranslatef(body[i].x, body[i].y, 0);
             glRotatef(body_rotation[i], 0.0f, 0.0f, 1.0f);
             glColor3f(0.0f, 1.0f, 0.0f);
-            if (i % 2 == 0) {
-                drawWorm2Model(1.0f);
-            } else {
-                drawWorm1Model(1.0f);
-            }
+            wormBodyModel.Draw(textures, false);
             glPopMatrix();
         }
     }
