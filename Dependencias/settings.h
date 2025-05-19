@@ -16,7 +16,6 @@ class Settings {
     }
 
     void init_settings() {
-        TTF_Init();
         TTF_Font* font = TTF_OpenFont("../Dependencias/yoster.ttf", 16);
 
         wireframeTexture = generate_text(font, "Wireframe", {0, 0, 0});

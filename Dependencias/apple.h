@@ -8,6 +8,7 @@
 class Apple {
   private:
     Point position;
+    float animationCounter;
 
   public:
     Apple(Point position);
@@ -40,6 +41,17 @@ void Apple::draw() {
     glTranslatef(position.x, position.y, 0);
     glTranslatef(0.0f, -0.45f, -0.1f);
     glScalef(0.07f, 0.07f, 0.07f);
+
+    if (!pause) {
+        animationCounter = animationCounter + (deltaTime * 72.0f * game_speed / 2.0f);
+    }
+
+    if (animationCounter >= 360.0f) {
+        animationCounter = 0.0f;
+    }
+
+    glRotatef(animationCounter, 0.0f, 1.0f, 0.0f);
+
     appleModel.Draw(textures, false);
     glPopMatrix();
 }
