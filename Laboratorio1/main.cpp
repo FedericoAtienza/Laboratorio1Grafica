@@ -66,8 +66,6 @@ int main(int argc, char* argv[]) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     bool fin = false;
-    bool fullscreen = false;
-    bool opciones = false;
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glShadeModel(GL_SMOOTH);
@@ -102,13 +100,13 @@ int main(int argc, char* argv[]) {
 
     LevelManager level_manager;
 
-   //Mix_PlayMusic(music, 0);
+    // Mix_PlayMusic(music, 0);
 
     Light lightSource;
-    lightSource.set_position({ 0.0f, 3.0f });
+    lightSource.set_position({0.0f, 3.0f});
     lightSource.set_color(1.0f, 1.0f, 1.0f);
 
-    // 
+    //
     glEnable(GL_LIGHTING);
 
     do {
@@ -149,19 +147,19 @@ int main(int argc, char* argv[]) {
         /* seccion CAMBIO DE NIVEL */
 
         // Controlo si debo involar al level manager
-        if (worm.to_exit()){
+        if (worm.to_exit()) {
             level_manager.set_animation_point(level_map.get_exit());
             level_manager.start_animation();
             worm.saliste();
-            //level_manager.next_level(win);
+            // level_manager.next_level(win);
         }
 
         // Animacion next level
-        if (level_manager.update_animation(deltaTime)){
+        if (level_manager.update_animation(deltaTime)) {
             // Donde spawneara el gusano el prox nivel
             Point spawn = level_map.get_spawn();
-            worm.reset({spawn.x, spawn.y}); // Aca le paso la nueva posicion inicial 
-            my_hud.update_level_number(); // Actualiza datos del hud correspondientes a sig nivel
+            worm.reset({spawn.x, spawn.y}); // Aca le paso la nueva posicion inicial
+            my_hud.update_level_number();   // Actualiza datos del hud correspondientes a sig nivel
             my_hud.hide_next_level();
         }
 
