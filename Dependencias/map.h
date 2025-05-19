@@ -1,6 +1,7 @@
 #include "apple.h"
 #include "block.h"
 #include "exit.h"
+#include "explosive.h"
 #include "point.h"
 #include "variables.h"
 #include <fstream>
@@ -20,6 +21,7 @@ class Map {
     int lvl;
     std::vector<Block> blocks;
     std::vector<Apple> apples;
+    std::vector<Explosive> explosives;
     Exit exit;
     Point spawn; // Punto de spawn
 
@@ -39,6 +41,8 @@ class Map {
 
     bool is_exit_in_point(Point p);
 
+    bool is_explosive_in_point(Point p);
+
     void remove_apple(Point p);
 
     void draw();
@@ -50,6 +54,8 @@ class Map {
     Point get_spawn();
 
     Point get_exit();
+
+    bool check_explosives();
 };
 
 Map::Map(int nivel) {
@@ -72,6 +78,15 @@ int Map::get_distance_to_ground(Point p) {
     }
     for (auto& apple : apples) {
         object_position = apple.get_position();
+        if (object_position.x == p.x && object_position.y < p.y) {
+            distance_aux = p.y - object_position.y;
+            if (distance > distance_aux) {
+                distance = distance_aux;
+            }
+        }
+    }
+    for (auto& explosive : explosives) {
+        object_position = explosive.get_position();
         if (object_position.x == p.x && object_position.y < p.y) {
             distance_aux = p.y - object_position.y;
             if (distance > distance_aux) {
@@ -107,6 +122,15 @@ bool Map::is_exit_in_point(Point p) {
     return false;
 }
 
+bool Map::is_explosive_in_point(Point p) {
+    for (auto& explosive : explosives) {
+        if (explosive.is_in(p)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void Map::remove_apple(Point p) {
     for (auto it = apples.begin(); it != apples.end(); ++it) {
         if (it->is_in(p)) {
@@ -118,10 +142,13 @@ void Map::remove_apple(Point p) {
 
 void Map::draw() {
     for (auto& block : blocks) {
-        block.draw();
+        block.draw(true);
     }
     for (auto& apple : apples) {
         apple.draw();
+    }
+    for (auto& explosive : explosives) {
+        explosive.draw();
     }
     exit.draw();
 }
@@ -162,7 +189,12 @@ std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
             float x;
             iss >> x;
             this->lvl = x;
-        } 
+        }
+        else if (caracter == 'T') {
+            float x, y;
+            iss >> x >> y;
+            explosives.push_back(Explosive({ x, y }));
+        }
     }
 
     file.close();
@@ -244,6 +276,11 @@ int Map::apple_quantity() {
 
 int Map::level_number(){
     return this->lvl;
+}
+
+bool Map::check_explosives() {
+    bool contact = false;
+    return false;
 }
 
 #endif

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdio.h>
+#include <iomanip>
 
 #ifdef __APPLE__ // macOS
 #include <Freeimage/FreeImage.h>
@@ -18,12 +19,14 @@
 #include <GL/glu.h>
 #endif
 
-#include "camera.h"
-#include "hud.h"
 #include "skybox.h"
+#include "camera.h"
 #include "settings.h"
 #include "variables.h"
 #include "level_manager.h"
+#include "worm.h"
+#include "hud.h"
+#include "light.h"
 
 using namespace std;
 
@@ -62,8 +65,15 @@ int main(int argc, char* argv[]) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    bool fin = false;
+    bool fullscreen = false;
+    bool opciones = false;
+
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glShadeModel(GL_SMOOTH);
+
+    // Considers color as material, important for showing light with colors
+    glEnable(GL_COLOR_MATERIAL);
 
     SDL_Event evento;
 
@@ -74,6 +84,18 @@ int main(int argc, char* argv[]) {
 
     loadModels();
 
+    // Carga de textura portal para la salida
+    portalTexture = LoadTexture("../Dependencias/nether_portal.png");
+
+    // Carga de textura bloques de tierra
+    dirtBlockTop = LoadTexture("../Dependencias/GrassTop.jpg");
+    dirtBlockSide = LoadTexture("../Dependencias/GrassSide.png");
+    dirtBlockBottom = LoadTexture("../Dependencias/GrassBottom.jpg");
+
+    // Carga de textura bloques de TNT
+    tntTopBottom = LoadTexture("../Dependencias/TNTTopBottom.png");
+    tntSide = LoadTexture("../Dependencias/TNTSide.png");
+
     Settings settings;
 
     HUD my_hud;
@@ -82,7 +104,12 @@ int main(int argc, char* argv[]) {
 
    //Mix_PlayMusic(music, 0);
 
-    bool fin = false;
+    Light lightSource;
+    lightSource.set_position({ 0.0f, 3.0f });
+    lightSource.set_color(1.0f, 1.0f, 1.0f);
+
+    // 
+    glEnable(GL_LIGHTING);
 
     do {
         // Cuanto tardo en procesar el frame
@@ -104,11 +131,16 @@ int main(int argc, char* argv[]) {
 
         camera.setViewMatrix();
 
+        // Dibujo la luz
+        if (light) {
+            lightSource.draw();
+        }
+
         // Dibujo la skybox
         DrawSkybox(1000.0f);
 
-        // Dibujo el worm
-        worm.draw();
+        // Controlo explosivos
+        worm.check_explosives();
 
         // Dibujo el mapa
         level_map.draw();
@@ -142,6 +174,9 @@ int main(int argc, char* argv[]) {
 
         /* fin secc cambio nivel */
         /*                       */
+
+        // Dibujo el worm
+        worm.draw();
 
         // Dibujo el HUD
         if (wireframe) {

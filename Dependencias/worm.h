@@ -15,6 +15,14 @@
 #define WORM_H
 
 class Worm {
+  public:
+    Uint32 animation_start_time;
+
+    void check_explosives() {
+        level_map.check_explosives();
+
+    }
+
   private:
     Point* head;
     Point body[WORM_MAX_LENGTH];
@@ -143,12 +151,16 @@ class Worm {
             return false;
 
         // Chequeo colisión con el cuerpo
-        if (is_worm_body_in_point(move_to))
+        if (is_worm_body_in_point(move_to)) {
+            Mix_PlayChannel(-1, sfx_blocked, 0);
             return false;
+        }
 
         // Chequeo colisión con bloques
-        if (level_map.is_block_in_point(move_to))
+        if (level_map.is_block_in_point(move_to)) {
+            Mix_PlayChannel(-1, sfx_blocked, 0);
             return false;
+        }
 
         // Check if the worm is growing
         if (level_map.is_apple_in_point(move_to)) {

@@ -37,10 +37,28 @@ bool opciones = false;
 // Audio
 int audio = Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048); // Initialize audio
 
-Mix_Chunk* sfx_movement = cargarSonido(("../Dependencias/Sonidos/SE_Pu.wav")); // Sfx for moving the worm
+Mix_Chunk* sfx_movement = cargarSonido("../Dependencias/Sonidos/SE_Pu.wav"); // Sfx for moving the worm
 
-Mix_Chunk* sfx_grow = cargarSonido(("../Dependencias/Sonidos/SE_KILLER_POWERUP2.wav")); // Sfx for growing the worm
+Mix_Chunk* sfx_grow = cargarSonido("../Dependencias/Sonidos/SE_KILLER_POWERUP2.wav"); // Sfx for growing the worm
+
+Mix_Chunk* sfx_blocked = cargarSonido("../Dependencias/Sonidos/PokemonWall.wav");
+
+Mix_Chunk* sfx_menu_option_enable = cargarSonido("../Dependencias/Sonidos/ZeldaMenuHigh.wav");
+
+Mix_Chunk* sfx_menu_option_disable = cargarSonido("../Dependencias/Sonidos/ZeldaMenuLow.wav");
 
 Mix_Music* music = cargarMusica("../Dependencias/Sonidos/EdgeKakkoi.wav"); // Background music
+
+// Variable for portal texture
+GLuint portalTexture;
+
+// Variables for dirt blocks
+GLuint dirtBlockTop;
+GLuint dirtBlockSide;
+GLuint dirtBlockBottom;
+
+// Variables for TNT blocks
+GLuint tntTopBottom;
+GLuint tntSide;
 
 #endif

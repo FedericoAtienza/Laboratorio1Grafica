@@ -145,7 +145,12 @@
   <ItemGroup>
     <ClInclude Include="..\Dependencias\apple.h" />
     <ClInclude Include="..\Dependencias\block.h" />
+    <ClInclude Include="..\Dependencias\camera.h" />
     <ClInclude Include="..\Dependencias\cube.h" />
+    <ClInclude Include="..\Dependencias\exit.h" />
+    <ClInclude Include="..\Dependencias\explosive.h" />
+    <ClInclude Include="..\Dependencias\hud.h" />
+    <ClInclude Include="..\Dependencias\light.h" />
     <ClInclude Include="..\Dependencias\map.h" />
     <ClInclude Include="..\Dependencias\map_variable.h" />
     <ClInclude Include="..\Dependencias\mesh.h" />
@@ -157,7 +162,11 @@
     <ClInclude Include="..\Dependencias\text.h" />
     <ClInclude Include="..\Dependencias\variables.h" />
     <ClInclude Include="..\Dependencias\worm.h" />
+    <ClInclude Include="..\Dependencias\worm_variable.h" />
     <ClInclude Include="sonido.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.gitignore" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
