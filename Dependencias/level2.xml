@@ -1,5 +1,6 @@
 <level number="2">
     <blocks>
+        <block x="-1.0" y="2.0"/>
         <block x="0.0" y="0.0" />
         <block x="1.0" y="0.0" />
         <block x="2.0" y="0.0" />
