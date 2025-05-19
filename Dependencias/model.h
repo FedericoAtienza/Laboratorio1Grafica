@@ -167,6 +167,7 @@ class Model {
             if (!skip) { // Si la textura no fue cargada, se carga
                 Texture texture;
                 texture.id = TextureFromFile(str.C_Str(), this->directory);
+                std::cout << "SE INTENTA AGARRAR LA TEXTURA: " << str.C_Str() << std::endl;
                 texture.path = str.C_Str();
                 textures.push_back(texture);
                 textures_loaded.push_back(texture); // La recuerda como textura guardada para el modelo entero,

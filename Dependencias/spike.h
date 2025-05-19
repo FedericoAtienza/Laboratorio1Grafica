@@ -1,6 +1,7 @@
 #include "cube.h"
 #include "models.h"
 #include "point.h"
+#include "variables.h"
 
 #ifndef SPIKE_H
 #define SPIKE_H
@@ -39,8 +40,8 @@ void Spike::draw() {
     glPushMatrix();
     glTranslatef(position.x, position.y, 0);
     glTranslatef(0.0f, -0.45f, -0.1f);
-    glScalef(0.07f, 0.07f, 0.07f);
-    //appleModel.Draw(textures, false);
+    //glScalef(0.7f, 0.07f, 0.07f);
+    spikeModel.Draw(textures, false);
     drawCube(1.0f);
     glPopMatrix();
 }

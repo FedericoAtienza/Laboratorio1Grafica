@@ -2,6 +2,7 @@
 #include "block.h"
 #include "exit.h"
 #include "explosive.h"
+#include "spike.h"
 #include "point.h"
 #include "variables.h"
 #include <fstream>
@@ -22,6 +23,7 @@ class Map {
     std::vector<Block> blocks;
     std::vector<Apple> apples;
     std::vector<Explosive> explosives;
+    std::vector<Spike> spikes;
     Exit exit;
     Point spawn; // Punto de spawn
 
@@ -151,6 +153,9 @@ void Map::draw() {
         explosive.draw();
     }
     exit.draw();
+    for (auto& spike : spikes) {
+        spike.draw();
+    }
 }
 
 /*
@@ -257,6 +262,8 @@ std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
         float y = exitElement->FloatAttribute("y");
         exit.set_position({x, y});
     }
+
+    spikes.push_back(Spike({5,5}));
 
     return ubicaciones;
 }
