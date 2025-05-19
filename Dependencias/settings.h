@@ -179,9 +179,11 @@ class Settings {
 
     void switch_light() {
         if (light) {
+            Mix_PlayChannel(-1, sfx_menu_option_disable, 0);
             glDisable(GL_LIGHTING);
             light = false;
         } else {
+            Mix_PlayChannel(-1, sfx_menu_option_enable, 0);
             glEnable(GL_LIGHTING);
             light = true;
         }
@@ -189,9 +191,11 @@ class Settings {
 
     void switch_wireframe() {
         if (wireframe) {
+            Mix_PlayChannel(-1, sfx_menu_option_disable, 0);
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             wireframe = false;
         } else {
+            Mix_PlayChannel(-1, sfx_menu_option_enable, 0);
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             wireframe = true;
         }
@@ -199,9 +203,11 @@ class Settings {
 
     void switch_shadeModel() {
         if (shadeFlat) {
+            Mix_PlayChannel(-1, sfx_menu_option_disable, 0);
             shadeFlat = false;
             glShadeModel(GL_SMOOTH);
         } else {
+            Mix_PlayChannel(-1, sfx_menu_option_enable, 0);
             shadeFlat = true;
             glShadeModel(GL_FLAT);
         }
@@ -209,8 +215,10 @@ class Settings {
 
     void switch_textures() {
         if (textures) {
+            Mix_PlayChannel(-1, sfx_menu_option_disable, 0);
             textures = false;
         } else {
+            Mix_PlayChannel(-1, sfx_menu_option_enable, 0);
             textures = true;
         }
     }
@@ -252,10 +260,13 @@ class Settings {
 
     void switch_speed() {
         if (game_speed == 1.0f) {
+            Mix_PlayChannel(-1, sfx_menu_option_disable, 0);
             game_speed = 2.0f;
         } else if (game_speed == 2.0f) {
+            Mix_PlayChannel(-1, sfx_menu_option_enable, 0);
             game_speed = 4.0f;
         } else {
+            Mix_PlayChannel(-1, sfx_menu_option_enable, 0);
             game_speed = 1.0f;
         }
     }
