@@ -99,17 +99,14 @@ class Worm {
     }
 
     void animation_handler() {
-        if (!pause) {
-            float animation_progress = animation_calculate_progress();
-            if (animation_progress >= 1.0f) {
-                animation_progress = 1.0f;
-            }
-            animation_move(animation_progress);
-            if (animation_progress == 1.0f) {
-                animation = false;
-                //deltaPause = 0;
-                handle_is_not_supported();
-            }
+        animation_calculate_progress();
+        if (animation_progress >= 1.0f) {
+            animation_progress = 1.0f;
+        }
+        animation_move(animation_progress);
+        if (animation_progress == 1.0f) {
+            animation = false;
+            handle_is_not_supported();
         }
     }
 
