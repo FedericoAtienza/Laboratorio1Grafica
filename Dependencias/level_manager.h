@@ -252,26 +252,11 @@ void LevelManager::start_death_animation() {
         p.dz = ((float)rand() / RAND_MAX) * 2.0f - 1.0f;
         death_particulas.push_back(p);
     }
-    /*
-    for (auto& p : particulas) {
-        p.c1 = ((float)rand() / RAND_MAX);
-        p.c2 = ((float)rand() / RAND_MAX);
-        p.c3 = ((float)rand() / RAND_MAX);
-    }
-    */
 }
 
 void LevelManager::draw_animation_death() {
     if (animating_death) {
-        for (auto& p : death_particulas) {
-            /*
-            if (!pause) { // Si estoy animando y no en pausa altero sus colores
-                p.c1 = ((float)rand() / RAND_MAX);
-                p.c2 = ((float)rand() / RAND_MAX);
-                p.c3 = ((float)rand() / RAND_MAX);
-            }
-            */
-            //glColor3f(p.c1,p.c2,p.c3);
+        for (auto& p : death_particulas) {;
             glColor4f(0.4f, 0.1f, 0.1f, 0.8f);
             drawCube(p.x, p.y, p.z, .2f);
         }

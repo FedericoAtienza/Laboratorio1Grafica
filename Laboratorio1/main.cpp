@@ -147,9 +147,10 @@ int main(int argc, char* argv[]) {
         /* seccion CHEQUEO MUERTE */
         
         Point punto_muerte;
-        if (worm.is_dead(punto_muerte)) { // tiene que retornar ubicacion 
+        if (worm.is_dead_spike(punto_muerte)) { // tiene que retornar ubicacion 
             // Invoco animacion muerte
             level_manager.set_dead_animation_point(punto_muerte);
+            worm.set_animating_death(true);
             level_manager.start_death_animation();
             worm.moriste();
         }
@@ -163,6 +164,20 @@ int main(int argc, char* argv[]) {
             // 1. reseteo el nivel (reconstruyendo manzanas)
             // 2. reseteo manzanas en el hud
             // 3. gusano vuelve a spawn y con el largo inicial
+            worm.set_animating_death(false);
+            level_manager.reset();
+            my_hud.reset_except_timer();
+            Point spawn = level_map.get_spawn();
+            worm.reset({spawn.x, spawn.y}); // Aca le paso la nueva posicion inicial
+        }
+
+        // Es true una vez que cayo al vacio y termino su animacion de fantasma
+        if (worm.is_dead_vacio()){
+            worm.start_vacio_death_animation();
+            worm.moriste();
+        }
+
+        if (worm.animation_vacio_ended()) {
             level_manager.reset();
             my_hud.reset_except_timer();
             Point spawn = level_map.get_spawn();
@@ -220,7 +235,7 @@ int main(int argc, char* argv[]) {
         }
 
         while (SDL_PollEvent(&evento)) {
-            if (!pause) {
+            if (!pause && (!worm.is_animating_death())) {
                 switch (evento.type) {
                 case SDL_MOUSEMOTION:
                     camera.handleMouseMotion(evento.motion.xrel, evento.motion.yrel);

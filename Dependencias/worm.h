@@ -28,12 +28,15 @@ class Worm {
     Point body[WORM_MAX_LENGTH];
     int body_length;
     bool animation;
+    bool animating_death; // indica si estan animando muerte x pinchos en level manager
     float animation_progress;
     float animation_duration; // in seconds (with game speed 1)
     Point animation_start_body[WORM_MAX_LENGTH];
     Point animation_end_body[WORM_MAX_LENGTH];
     bool exit; // indica que esta en salida
-    bool dead; // indica que esta MUERTO
+    bool dead_spike; // indica que esta MUERTO
+    bool dead_vacio;
+    bool animation_vacio_end;
     float r_head, g_head, b_head;
     float r_body, g_body, b_body;
     float alpha;
@@ -97,30 +100,18 @@ class Worm {
             if (body[i].y < -5){
                 cayo_al_vacio = true;
                 break;
+            } else if (body[i].y > 8){
+                animation_vacio_end = true;
+                break;
             }
+
         }
         if (cayo_al_vacio){
-            muerte_vacio();
+            animation_vacio_end = false;
+            this->dead_vacio = true;
         }
     }
 
-    void muerte_vacio(){
-        // Aca puedo disparar animacion "fantasma"
-        // Seteo colores fantasmita
-        this->r_head = 0.6;
-        this->g_head = 0.9;
-        this->b_body = 1.0;
-        this->r_body = 0.6;
-        this->g_body = 0.9;
-        this->b_body = 1.0;
-        this->alpha = 0.3;
-        for (int i = 0; i < body_length; i++) {
-            animation_start_body[i] = body[i]; // la posicion actual
-            animation_end_body[i].x = body[i].x; // sin movimiento en x, solo quiero que "flote" para arriba
-            animation_end_body[i].y = body[i].y + 99; // y que se mueva hasta muy arriba por eso sumo 99
-        }
-        animation_progress = 0.0f; // reinicio progreos animacion
-    }
 
     void handle_is_not_supported() {
         int distance = get_distance_to_ground();
@@ -131,7 +122,7 @@ class Worm {
         // Chequeo contacto con pinchos
         for (int i = 0; i < body_length; i++) {
             if (level_map.is_spike_in_point(body[i])) {
-                this->dead = true;
+                this->dead_spike = true;
 
             }
         }
@@ -249,6 +240,8 @@ class Worm {
         this->g_body = 1.0f;
         this->b_body = 0.0f;
         this->alpha = 1.0; // inicialmente opaco
+        this->animation_vacio_end = false;
+        this->animating_death = false;
     }
 
     bool to_exit(){
@@ -263,8 +256,8 @@ class Worm {
         this->exit = false; 
     }
 
-    bool is_dead(Point &punto_muerte){
-        if (this->dead) {
+    bool is_dead_spike(Point &punto_muerte){
+        if (this->dead_spike) {
             punto_muerte = this->get_head();
             return true;
         } else {
@@ -272,8 +265,41 @@ class Worm {
         }
     }
 
+    void start_vacio_death_animation(){
+        // Aca puedo disparar animacion "fantasma"
+        // Seteo colores fantasmita
+        this->dead_vacio = true;
+        this->r_head = 0.6;
+        this->g_head = 0.9;
+        this->b_body = 1.0;
+        this->r_body = 0.6;
+        this->g_body = 0.9;
+        this->b_body = 1.0;
+        this->alpha = 0.3;
+        for (int i = 0; i < body_length; i++) {
+            animation_start_body[i] = body[i]; // la posicion actual
+            animation_end_body[i].x = body[i].x; // sin movimiento en x, solo quiero que "flote" para arriba
+            animation_end_body[i].y = body[i].y + 99; // y que se mueva hasta muy arriba por eso sumo 99
+        }
+        animation_progress = 0.0f; // reinicio progreos animacion
+        
+    }
+
+    bool animation_vacio_ended(){
+        return this->animation_vacio_end;
+    }
+
+    bool is_dead_vacio(){
+        if (this->dead_vacio) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     void moriste(){
-        this->dead = false;
+        this->dead_spike = false;
+        this->dead_vacio = false;
     }
 
     void move_right() {
@@ -297,7 +323,7 @@ class Worm {
     }
 
     void draw() {
-        if (animation) {
+        if (animation && (!this->dead_spike)) {
             animation_handler();
         }
         draw_worm();
@@ -305,6 +331,14 @@ class Worm {
 
     Point get_head() {
         return *head;
+    }
+
+    void set_animating_death(bool entry){
+        this->animating_death = entry;
+    }
+
+    bool is_animating_death(){
+        return this->animating_death;
     }
 };
 
