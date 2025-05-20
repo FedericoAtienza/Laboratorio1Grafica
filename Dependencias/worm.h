@@ -33,6 +33,7 @@ class Worm {
     Point animation_start_body[WORM_MAX_LENGTH];
     Point animation_end_body[WORM_MAX_LENGTH];
     bool exit; // indica que esta en salida
+    bool dead; // indica que esta MUERTO
     float r_head, g_head, b_head;
     float r_body, g_body, b_body;
     float alpha;
@@ -174,6 +175,14 @@ class Worm {
             this->exit = true;
         }
 
+        // Chequeo si muere por pinchos
+        if (level_map.is_spike_in_point(move_to)){
+            // MUERTE POR PINCHAZO:
+            // 1. Sonido pincho
+            // 2. Muerte
+            this->dead = true;
+        }
+
         return true;
     }
 
@@ -252,6 +261,19 @@ class Worm {
 
     void saliste(){
         this->exit = false; 
+    }
+
+    bool is_dead(Point &punto_muerte){
+        if (this->dead) {
+            punto_muerte = this->get_head();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    void moriste(){
+        this->dead = false;
     }
 
     void move_right() {

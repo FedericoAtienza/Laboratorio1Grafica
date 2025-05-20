@@ -45,6 +45,8 @@ class Map {
 
     bool is_explosive_in_point(Point p);
 
+    bool is_spike_in_point(Point p);
+
     void remove_apple(Point p);
 
     void draw();
@@ -262,11 +264,21 @@ std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
         float y = exitElement->FloatAttribute("y");
         exit.set_position({x, y});
     }
-
-    spikes.push_back(Spike({5,5}));
+    // POR AHORA HARDCODEADO
+    spikes.push_back(Spike({2,1}));
 
     return ubicaciones;
 }
+
+bool Map::is_spike_in_point(Point p){
+    for (auto& spike : spikes) {
+        if (spike.is_in(p)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 
 Point Map::get_spawn(){

@@ -23,7 +23,12 @@ class LevelManager{
     private:
         bool animating;
         float animation_time;
+
+        bool animating_death;
         Point animation_point;
+        Point death_animation_point;
+        std::vector<Particula> death_particulas; // Para la animacion 1, sus cubitos
+
 
         std::vector<Particula> particulas; // Para la animacion 1, sus cubitos
 
@@ -39,6 +44,11 @@ class LevelManager{
         void set_animation_point(Point p);        
         void next_level();
 
+        void set_dead_animation_point(Point p);
+        bool is_animating_death();
+        void start_death_animation();
+        void draw_animation_death();
+        bool update_death_animation(float deltaTime);
 };
 
 bool LevelManager::is_animating() {
@@ -214,4 +224,79 @@ void LevelManager::drawCube(float x, float y, float z, float scale = 1.0f) {
 
     glPopMatrix();
 
+}
+
+void LevelManager::set_dead_animation_point(Point p){
+    death_animation_point = p;
+}
+
+void LevelManager::start_death_animation() {
+    std::cout << "start death anim" << std::endl;
+    animating_death = true;
+    animation_time = 0.0f;
+
+    int cant_particulas = 50;
+    for (int i = 0; i < cant_particulas; ++i) {
+        Particula p;
+        p.x = death_animation_point.x;
+        p.y = death_animation_point.y;
+        p.z = 0.0f;
+
+        // Direcc aleatoria entre -1 y 1
+        p.dx = ((float)rand() / RAND_MAX) * 2.0f - 1.0f;
+        p.dy = 0;//((float)rand() / RAND_MAX) * 2.0f;
+        p.dz = ((float)rand() / RAND_MAX) * 2.0f - 1.0f;
+        death_particulas.push_back(p);
+    }
+    /*
+    for (auto& p : particulas) {
+        p.c1 = ((float)rand() / RAND_MAX);
+        p.c2 = ((float)rand() / RAND_MAX);
+        p.c3 = ((float)rand() / RAND_MAX);
+    }
+    */
+}
+
+void LevelManager::draw_animation_death() {
+    if (animating_death) {
+        for (auto& p : death_particulas) {
+            /*
+            if (!pause) { // Si estoy animando y no en pausa altero sus colores
+                p.c1 = ((float)rand() / RAND_MAX);
+                p.c2 = ((float)rand() / RAND_MAX);
+                p.c3 = ((float)rand() / RAND_MAX);
+            }
+            */
+            //glColor3f(p.c1,p.c2,p.c3);
+            glColor4f(0.4f, 0.1f, 0.1f, 0.8f);
+            drawCube(p.x, p.y, p.z, .2f);
+        }
+    }
+}
+
+bool LevelManager::is_animating_death() {
+    return this->animating_death;
+}
+
+bool LevelManager::update_death_animation(float deltaTime) {
+    if (animating_death) {
+        animation_time += deltaTime;
+
+        for (auto& p : death_particulas) {
+            p.x += p.dx * deltaTime * .75f; // velocidad
+            p.y += p.dy * deltaTime * .75f;
+            p.z += p.dz * deltaTime * .75f;
+        }
+
+        // Cuando pasa el tiempo de animacion, la desactivo y borro las particulas
+        if (animation_time > 2.0f) {
+            animating_death = false;
+            death_particulas.clear(); 
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
 }

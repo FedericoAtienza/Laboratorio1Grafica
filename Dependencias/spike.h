@@ -39,10 +39,9 @@ bool Spike::is_in(Point p) {
 void Spike::draw() {
     glPushMatrix();
     glTranslatef(position.x, position.y, 0);
-    glTranslatef(0.0f, -0.45f, -0.1f);
-    //glScalef(0.7f, 0.07f, 0.07f);
+    glTranslatef(0.0f, -0.45f, 0.0f);
+    glScalef(0.6f, 0.6f, 0.6f);
     spikeModel.Draw(textures, false);
-    drawCube(1.0f);
     glPopMatrix();
 }
 
