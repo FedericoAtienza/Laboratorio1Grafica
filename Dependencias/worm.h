@@ -127,6 +127,14 @@ class Worm {
         if (distance > 0) {
             animation_start_falling(distance);
         }
+
+        // Chequeo contacto con pinchos
+        for (int i = 0; i < body_length; i++) {
+            if (level_map.is_spike_in_point(body[i])) {
+                this->dead = true;
+
+            }
+        }
     }
 
     void animation_handler() {
@@ -173,14 +181,6 @@ class Worm {
         // Chequeo si se mueve a la salida  
         if (level_map.is_exit_in_point(move_to)) {
             this->exit = true;
-        }
-
-        // Chequeo si muere por pinchos
-        if (level_map.is_spike_in_point(move_to)){
-            // MUERTE POR PINCHAZO:
-            // 1. Sonido pincho
-            // 2. Muerte
-            this->dead = true;
         }
 
         return true;

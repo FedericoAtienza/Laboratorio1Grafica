@@ -142,8 +142,10 @@ int main(int argc, char* argv[]) {
 
         // Dibujo el mapa
         level_map.draw();
+
+        /*                        */
+        /* seccion CHEQUEO MUERTE */
         
-        /* Seccion chequeo muerte por pinchos */
         Point punto_muerte;
         if (worm.is_dead(punto_muerte)) { // tiene que retornar ubicacion 
             // Invoco animacion muerte
@@ -151,27 +153,26 @@ int main(int argc, char* argv[]) {
             level_manager.start_death_animation();
             worm.moriste();
         }
-
-        // Comienzan animaciones de MUERTE
         
         if (level_manager.is_animating_death()) {
             level_manager.draw_animation_death();
-            // y muerte luego, no se bien como
         }
 
         if (level_manager.update_death_animation(deltaTime)) {
-            std::cout << "update death" << std::endl;
-            // ACA HAY QUE RESETEAR EL NIVEL !!
-
-
-            // Donde spawneara el gusano el prox nivel
-            //Point spawn = level_map.get_spawn();
-            //worm.reset({spawn.x, spawn.y}); // Aca le paso la nueva posicion inicial
-            //my_hud.update_level_number();   // Actualiza datos del hud correspondientes a sig nivel
-            //my_hud.hide_next_level();
+            // Una vez muere por pinchos:
+            // 1. reseteo el nivel (reconstruyendo manzanas)
+            // 2. reseteo manzanas en el hud
+            // 3. gusano vuelve a spawn y con el largo inicial
+            level_manager.reset();
+            my_hud.reset_except_timer();
+            Point spawn = level_map.get_spawn();
+            worm.reset({spawn.x, spawn.y}); // Aca le paso la nueva posicion inicial
         }
-        
 
+        /* fin secc chequeo muerte */
+        /*                         */
+
+        
         /*                         */
         /* seccion CAMBIO DE NIVEL */
 

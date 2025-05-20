@@ -41,7 +41,8 @@ class LevelManager{
         void draw_animation_2();
         void start_animation();
         bool is_animating();
-        void set_animation_point(Point p);        
+        void set_animation_point(Point p);  
+
         void next_level();
 
         void set_dead_animation_point(Point p);
@@ -49,6 +50,8 @@ class LevelManager{
         void start_death_animation();
         void draw_animation_death();
         bool update_death_animation(float deltaTime);
+
+        void reset(); // reset level despues de morir
 };
 
 bool LevelManager::is_animating() {
@@ -90,7 +93,8 @@ bool LevelManager::update_animation(float deltaTime) {
             p.z += p.dz * deltaTime * 2.0f;
         }
 
-        // Cuando pasa el tiempo de animacion, la desactivo y borro las particulas
+        // Cuando pasa el tiempo de animacion, la desactivo y borro las particulas,
+        // y cargo el proximo nivel
         if (animation_time > 1.5f) {
             animating = false;
             particulas.clear(); 
@@ -299,4 +303,9 @@ bool LevelManager::update_death_animation(float deltaTime) {
     } else {
         return false;
     }
+}
+
+// Cuando muere el gusano, es necesario resetear el nivel
+void LevelManager::reset() {
+    level_map = Map(level);
 }

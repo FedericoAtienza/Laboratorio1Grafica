@@ -93,8 +93,7 @@ class HUD {
     void hide_next_level();
     void cargar_textura_next_level_frame();
 
-    // NO IMPLEMENTADO AUN
-    void reset(); // Por si pierde, ahi se detectaria y se invoca reset
+    void reset_except_timer(); // Por si pierde (muere) ahi se detectaria y se invoca reset
 };
 
 HUD::HUD() {
@@ -547,6 +546,11 @@ void HUD::update() {
 
     // Actualizar la velocidad
     update_speed();
+}
+
+void HUD::reset_except_timer(){
+    this->eaten_apples = 0;
+    this->total_apples = level_map.apple_quantity();
 }
 
 #endif
