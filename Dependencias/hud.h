@@ -46,6 +46,13 @@ class HUD {
     GLuint next_level_frame;
     int next_level_frame_w, next_level_frame_h;
 
+    // Cartel YOU DIED
+    TTF_Font* you_died_font;
+    SDL_Color you_died_color;
+    int you_died_w, you_died_h;
+    GLuint you_died_texture;
+    bool show_you_died_sign;
+
     GLuint crear_textura_texto(const char* texto, TTF_Font* fuente, SDL_Color color, int& w, int& h);
     TTF_Font* cargar_fuente(const char* ruta, int tamano);
 
@@ -94,6 +101,11 @@ class HUD {
     void cargar_textura_next_level_frame();
 
     void reset_except_timer(); // Por si pierde (muere) ahi se detectaria y se invoca reset
+
+    // Para mensaje YOU DIED
+    void create_you_died_text(const char* text);
+    void show_you_died();
+    void hide_you_died();
 };
 
 HUD::HUD() {
@@ -119,10 +131,15 @@ HUD::HUD() {
     cargar_textura_apple();
     cargar_textura_carta();
     cargar_textura_next_level_frame();
-    next_level_font = cargar_fuente("../Dependencias/Fonts/royal-acidbath/Royalacid_o.ttf", 48);
 
-    create_next_level_text("WELL DONE!");
     next_level_color = {255, 255, 255, 255};
+    next_level_font = cargar_fuente("../Dependencias/Fonts/royal-acidbath/Royalacid_o.ttf", 48);
+    create_next_level_text("WELL DONE!");
+
+    you_died_color = {160, 0, 0, 255};
+    you_died_font = cargar_fuente("../Dependencias/Fonts/optimus-princeps/OptimusPrinceps.ttf", 64);
+    create_you_died_text("YOU DIED");
+
 }
 
 HUD::~HUD() {
@@ -209,6 +226,18 @@ void HUD::create_speed_text(const char* text) {
 
 void HUD::create_next_level_text(const char* text){
     this->next_level_texture = crear_textura_texto(text, this->next_level_font, this->next_level_color, this->next_level_w, this->next_level_h);
+}
+
+void HUD::create_you_died_text(const char* text){
+    this->you_died_texture = crear_textura_texto(text, this->you_died_font, this->you_died_color, this->you_died_w, this->you_died_h);
+}
+
+void HUD::show_you_died(){
+    this->show_you_died_sign = true;
+}
+
+void HUD::hide_you_died(){
+    this->show_you_died_sign = false;
 }
 
 void HUD::update_level_number(){
@@ -405,6 +434,37 @@ void HUD::draw() {
         glEnd();
     }
 
+    // 6. Si corresponde, muestro cartel YOU DIED
+    if (show_you_died_sign) {
+        // 6.1 Dibujo un quad grisaceo traslucido sobre el viewport completo
+        x = 0;
+        y = 0;
+        glDisable(GL_TEXTURE_2D);
+        glBegin(GL_QUADS);
+        glColor4f(0,0,0,0.60);
+        glVertex2f(x, y);
+        glVertex2f(x + 800, y);
+        glVertex2f(x + 800, y + 600);
+        glVertex2f(x, y + 600);
+        glEnd();
+
+        // 6.2 Dibujo el texto you died
+        x = 400 - you_died_w/2;
+        y = 300 - you_died_h/2;
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, you_died_texture);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0, 0);
+        glVertex2f(x, y);
+        glTexCoord2f(1, 0);
+        glVertex2f(x + you_died_w, y);
+        glTexCoord2f(1, 1);
+        glVertex2f(x + you_died_w, y + you_died_h);
+        glTexCoord2f(0, 1);
+        glVertex2f(x, y + you_died_h);
+        glEnd();
+    }
+
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     glEnable(GL_DEPTH_TEST);
@@ -520,7 +580,7 @@ void HUD::cargar_textura_carta() {
     this->carta_texture = cargarTexturaCarta("../Dependencias/TexturasHUD/carta.png");
 }
 
-void HUD::cargar_textura_next_level_frame(){ // SEGUIR ESTO
+void HUD::cargar_textura_next_level_frame(){
     this->next_level_frame = cargarTexturaNextLevelFrame("../Dependencias/TexturasHUD/banner.png");
 }
 
