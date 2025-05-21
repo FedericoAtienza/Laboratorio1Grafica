@@ -6,6 +6,7 @@
 #include "SDL_opengl.h"
 #endif
 
+#include "models.h"
 #include "cube.h"
 #include "map_variable.h"
 #include "point.h"
@@ -197,9 +198,12 @@ class Worm {
         for (int i = 1; i < body_length; i++) {
             glPushMatrix();
             glTranslatef(body[i].x, body[i].y, 0);
+            glScalef(0.55f, 0.55f, 0.55f);
+            glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
             //glColor3f(0.0f, 1.0f, 0.0f);
-            glColor4f(this->r_body, this->g_body,this->b_body, this->alpha);
-            drawCube(0.99f);
+            //glColor4f(this->r_body, this->g_body,this->b_body, this->alpha);
+            //drawCube(0.99f);
+            wormModel.Draw(true, false);
             glPopMatrix();
         }
     }
