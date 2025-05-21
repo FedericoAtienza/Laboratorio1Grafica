@@ -5,12 +5,16 @@
 
 Model appleModel;
 Model spikeModel;
-Model wormModel;
+Model wormBody;
+Model wormEye;
+Model wormHead;
 
 void loadModels() {
     appleModel.loadModel("../Dependencias/Apple/Apple.obj");
     spikeModel.loadModel("../Dependencias/Spike/Spike.dae");
-    wormModel.loadModel("../Dependencias/Wiggler/Wiggler.dae");
+    wormBody.loadModel("../Dependencias/Wiggler/Wiggler.dae");
+    wormEye.loadModel("../Dependencias/Wiggler/OjoGusano.dae");
+    wormHead.loadModel("../Dependencias/Wiggler/Cabeza.dae");
 }
 
 #endif

@@ -187,11 +187,28 @@ class Worm {
 
     void draw_head() {
         glPushMatrix();
-        glTranslatef(head->x, head->y, 0);
-        //glColor3f(1.0f, 0.0f, 1.0f);
-        glColor4f(this->r_head, this->g_head,this->b_head, this->alpha);
-        drawCube(1.0f);
+        glTranslatef(head->x + 0.3f, head->y + 0.2f, 0.3f);
+        glScalef(0.25f, 0.25f, 0.25f);
+        glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+        glRotatef(-45.0f, 0.0f, 0.0f, 1.0f);
+        wormEye.Draw(true, false);
         glPopMatrix();
+
+        glPushMatrix();
+        glTranslatef(head->x + 0.3f, head->y + 0.2f, -0.3f);
+        glScalef(0.25f, 0.25f, 0.25f);
+        glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+        glRotatef(-45.0f, 0.0f, 0.0f, 1.0f);
+        wormEye.Draw(true, false);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslatef(head->x, head->y, 0);
+        glScalef(0.6f, 0.6f, 0.6f);
+        glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+        wormHead.Draw(true, false);
+        glPopMatrix();
+
     }
 
     void draw_body() {
@@ -200,10 +217,12 @@ class Worm {
             glTranslatef(body[i].x, body[i].y, 0);
             glScalef(0.55f, 0.55f, 0.55f);
             glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-            //glColor3f(0.0f, 1.0f, 0.0f);
-            //glColor4f(this->r_body, this->g_body,this->b_body, this->alpha);
-            //drawCube(0.99f);
-            wormModel.Draw(true, false);
+            if (i % 2 == 1) {
+                wormBody.Draw(true, false);
+            }
+            else {
+                wormHead.Draw(true, false);
+            }
             glPopMatrix();
         }
     }
