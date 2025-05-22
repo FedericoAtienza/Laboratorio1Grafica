@@ -36,6 +36,7 @@ class LevelManager{
         void drawStar(float x, float y, float z, float cubeScale);
 
     public:
+        LevelManager();
         bool update_animation(float deltaTime);
         void draw_animation_1();
         void draw_animation_2();
@@ -53,6 +54,12 @@ class LevelManager{
 
         void reset(); // reset level despues de morir
 };
+
+LevelManager::LevelManager() {
+    animating = false;
+    animating_death = false;
+    animation_time = 0.0f;
+}
 
 bool LevelManager::is_animating() {
     return this->animating;

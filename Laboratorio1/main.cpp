@@ -100,6 +100,9 @@ int main(int argc, char* argv[]) {
 
     LevelManager level_manager;
 
+    Point spawn = level_map.get_spawn();
+    worm.reset({spawn.x, spawn.y}); // Aca le paso la nueva posicion inicial
+
     // Mix_PlayMusic(music, 0);
 
     Light lightSource;
@@ -144,16 +147,16 @@ int main(int argc, char* argv[]) {
 
         /*                        */
         /* seccion CHEQUEO MUERTE */
-        
+
         Point punto_muerte;
-        if (worm.is_dead_spike(punto_muerte)) { // tiene que retornar ubicacion 
+        if (worm.is_dead_spike(punto_muerte)) { // tiene que retornar ubicacion
             // Invoco animacion muerte
             level_manager.set_dead_animation_point(punto_muerte);
             worm.set_animating_death(true);
             level_manager.start_death_animation();
             worm.moriste();
         }
-        
+
         if (level_manager.is_animating_death()) {
             level_manager.draw_animation_death();
             my_hud.show_you_died();
@@ -167,13 +170,13 @@ int main(int argc, char* argv[]) {
             worm.set_animating_death(false);
             level_manager.reset();
             my_hud.reset_except_timer();
-            Point spawn = level_map.get_spawn();
+            spawn = level_map.get_spawn();
             worm.reset({spawn.x, spawn.y}); // Aca le paso la nueva posicion inicial
             my_hud.hide_you_died();
         }
 
         // Es true una vez que cayo al vacio y termino su animacion de fantasma
-        if (worm.is_dead_vacio()){
+        if (worm.is_dead_vacio()) {
             worm.start_vacio_death_animation();
             my_hud.show_you_died();
             worm.moriste();
@@ -190,7 +193,6 @@ int main(int argc, char* argv[]) {
         /* fin secc chequeo muerte */
         /*                         */
 
-        
         /*                         */
         /* seccion CAMBIO DE NIVEL */
 
