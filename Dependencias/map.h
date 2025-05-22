@@ -274,8 +274,6 @@ std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
         float y = exitElement->FloatAttribute("y");
         exit.set_position({x, y});
     }
-    // POR AHORA HARDCODEADO
-    spikes.push_back(Spike({2,1}));
 
     return ubicaciones;
 }
