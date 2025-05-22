@@ -15,7 +15,6 @@
 
 using namespace tinyxml2;
 
-
 class Map {
   private:
     /* Componentes del mapa: bloques, manzanas, exit (por ahora) */
@@ -26,7 +25,6 @@ class Map {
     std::vector<Spike> spikes;
     Exit exit;
     Point spawn; // Punto de spawn
-
 
     // Esto no se si ira finalmente aca o en otro archivo de utilities
     // Para cargar las posiciones de los componentes del nivel (bloques, manzanas, pinchos, ...)
@@ -87,6 +85,13 @@ int Map::get_distance_to_ground(Point p) {
             if (distance > distance_aux) {
                 distance = distance_aux;
             }
+        }
+    }
+    object_position = exit.get_position();
+    if (object_position.x == p.x && object_position.y < p.y) {
+        distance_aux = p.y - object_position.y;
+        if (distance > distance_aux) {
+            distance = distance_aux;
         }
     }
     for (auto& explosive : explosives) {
@@ -209,7 +214,6 @@ std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
 }
 */
 
-
 std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
     std::vector<Point> ubicaciones;
 
@@ -230,8 +234,7 @@ std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
     root->QueryIntAttribute("number", &this->lvl);
 
     // Bloques
-    XMLElement* block = root->FirstChildElement("blocks") ?
-                        root->FirstChildElement("blocks")->FirstChildElement("block") : nullptr;
+    XMLElement* block = root->FirstChildElement("blocks") ? root->FirstChildElement("blocks")->FirstChildElement("block") : nullptr;
     while (block) {
         float x = block->FloatAttribute("x");
         float y = block->FloatAttribute("y");
@@ -240,8 +243,7 @@ std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
     }
 
     // Manzanas
-    XMLElement* apple = root->FirstChildElement("apples") ?
-                        root->FirstChildElement("apples")->FirstChildElement("apple") : nullptr;
+    XMLElement* apple = root->FirstChildElement("apples") ? root->FirstChildElement("apples")->FirstChildElement("apple") : nullptr;
     while (apple) {
         float x = apple->FloatAttribute("x");
         float y = apple->FloatAttribute("y");
@@ -250,8 +252,7 @@ std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
     }
 
     // Pinchos
-    XMLElement* spike = root->FirstChildElement("spikes") ?
-    root->FirstChildElement("spikes")->FirstChildElement("spike") : nullptr;
+    XMLElement* spike = root->FirstChildElement("spikes") ? root->FirstChildElement("spikes")->FirstChildElement("spike") : nullptr;
     while (spike) {
         float x = spike->FloatAttribute("x");
         float y = spike->FloatAttribute("y");
@@ -264,7 +265,7 @@ std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
     if (spawn) {
         float x = spawn->FloatAttribute("x");
         float y = spawn->FloatAttribute("y");
-        this->spawn = {x,y};
+        this->spawn = {x, y};
     }
 
     // Salida (meta del nivel)
@@ -278,7 +279,7 @@ std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
     return ubicaciones;
 }
 
-bool Map::is_spike_in_point(Point p){
+bool Map::is_spike_in_point(Point p) {
     for (auto& spike : spikes) {
         if (spike.is_in(p)) {
             return true;
@@ -287,13 +288,11 @@ bool Map::is_spike_in_point(Point p){
     return false;
 }
 
-
-
-Point Map::get_spawn(){
+Point Map::get_spawn() {
     return spawn;
 }
 
-Point Map::get_exit(){
+Point Map::get_exit() {
     return exit.get_position();
 }
 
@@ -301,7 +300,7 @@ int Map::apple_quantity() {
     return apples.size();
 }
 
-int Map::level_number(){
+int Map::level_number() {
     return this->lvl;
 }
 
