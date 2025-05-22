@@ -17,11 +17,8 @@
 
 class Worm {
   public:
-    Uint32 animation_start_time;
-
     void check_explosives() {
         level_map.check_explosives();
-
     }
 
   private:
@@ -34,7 +31,10 @@ class Worm {
     float animation_duration; // in seconds (with game speed 1)
     Point animation_start_body[WORM_MAX_LENGTH];
     Point animation_end_body[WORM_MAX_LENGTH];
-    bool exit; // indica que esta en salida
+    float body_rotation[WORM_MAX_LENGTH];
+    float animation_start_body_rotation[WORM_MAX_LENGTH];
+    float animation_end_body_rotation[WORM_MAX_LENGTH];
+    bool exit;       // indica que esta en salida
     bool dead_spike; // indica que esta MUERTO
     bool dead_vacio;
     bool animation_vacio_end;
@@ -64,15 +64,33 @@ class Worm {
         return distance;
     }
 
+    float animation_calculate_rotation(Point start, Point end) {
+        if (start.x == end.x - 1)
+            return 0.0f; // right
+        if (start.x == end.x + 1)
+            return 180.0f; // left
+        if (start.y == end.y - 1)
+            return 90.0f; // up
+        if (start.y == end.y + 1)
+            return 270.0f; // down
+
+        return 0.0f; // default
+    }
+
     void animation_start_moving(Point next_position) {
         animation = true;
         animation_duration = 0.5f;
         animation_progress = 0.0f;
         animation_start_body[0] = body[0];
         animation_end_body[0] = next_position;
+        animation_start_body_rotation[0] = body_rotation[0];
+        animation_end_body_rotation[0] = animation_calculate_rotation(body[0], next_position);
+
         for (int i = 1; i < body_length; i++) {
             animation_start_body[i] = body[i];
             animation_end_body[i] = body[i - 1];
+            animation_start_body_rotation[i] = body_rotation[i];
+            animation_end_body_rotation[i] = body_rotation[i - 1];
         }
     }
 
@@ -80,10 +98,13 @@ class Worm {
         animation = true;
         animation_duration = 0.5f * distance;
         animation_progress = 0.0f;
+
         for (int i = 0; i < body_length; i++) {
             animation_start_body[i] = body[i];
             animation_end_body[i].x = body[i].x;
             animation_end_body[i].y = body[i].y - distance;
+            animation_start_body_rotation[i] = body_rotation[i];
+            animation_end_body_rotation[i] = body_rotation[i];
         }
     }
 
@@ -98,21 +119,29 @@ class Worm {
         for (int i = body_length - 1; i >= 0; i--) {
             body[i].x = (animation_start_body[i].x + animation_progress * (animation_end_body[i].x - animation_start_body[i].x));
             body[i].y = (animation_start_body[i].y + animation_progress * (animation_end_body[i].y - animation_start_body[i].y));
-            if (body[i].y < -5){
-                cayo_al_vacio = true;
-                break;
-            } else if (body[i].y > 8){
-                animation_vacio_end = true;
-                break;
-            }
-
+            float difference = animation_end_body_rotation[i] - animation_start_body_rotation[i];
+            // Normalize the difference between 270 and 0 to be -90 or 90
+            if (difference == -270.0f)
+                difference = 90.0f;
+            if (difference == 270.0f)
+                difference = -90.0f;
+            body_rotation[i] = (animation_start_body_rotation[i] + animation_progress * difference);
+            // Normalize the rotation to be between 0 and 360
+            if (body_rotation[i] >= 360.0f)
+                body_rotation[i] -= 360.0f;
+            if (body_rotation[i] < 0.0f)
+                body_rotation[i] += 360.0f;
         }
-        if (cayo_al_vacio){
+        if (body[0].y < -5) {
+            cayo_al_vacio = true;
+        } else if (body[0].y > 8) {
+            animation_vacio_end = true;
+        }
+        if (cayo_al_vacio) {
             animation_vacio_end = false;
             this->dead_vacio = true;
         }
     }
-
 
     void handle_is_not_supported() {
         int distance = get_distance_to_ground();
@@ -124,7 +153,6 @@ class Worm {
         for (int i = 0; i < body_length; i++) {
             if (level_map.is_spike_in_point(body[i])) {
                 this->dead_spike = true;
-
             }
         }
     }
@@ -170,7 +198,7 @@ class Worm {
             grow_while_moving();
         }
 
-        // Chequeo si se mueve a la salida  
+        // Chequeo si se mueve a la salida
         if (level_map.is_exit_in_point(move_to)) {
             this->exit = true;
         }
@@ -187,40 +215,44 @@ class Worm {
 
     void draw_head() {
         glPushMatrix();
-        glTranslatef(head->x + 0.3f, head->y + 0.3f, 0.2f);
+        glTranslatef(head->x, head->y, 0);
+        glRotatef(body_rotation[0], 0.0f, 0.0f, 1.0f);
+
+        glPushMatrix();
+        glTranslatef(0.3f, 0.3f, 0.2f);
         glScalef(0.3f, 0.3f, 0.3f);
         wormEye.Draw(true, false);
         glPopMatrix();
 
         glPushMatrix();
-        glTranslatef(head->x + 0.3f, head->y + 0.3f, -0.2f);
+        glTranslatef(0.3f, 0.3f, -0.2f);
         glScalef(0.3f, 0.3f, 0.3f);
         wormEye.Draw(true, false);
         glPopMatrix();
 
         glPushMatrix();
-        glTranslatef(head->x + 0.3f, head->y + 0.3f, 0.2f);
+        glTranslatef(0.3f, 0.3f, 0.2f);
         glScalef(0.3f, 0.3f, 0.3f);
         wormEyelid.Draw(true, false);
         glPopMatrix();
 
         glPushMatrix();
-        glTranslatef(head->x + 0.3f, head->y + 0.3f, -0.2f);
+        glTranslatef(0.3f, 0.3f, -0.2f);
         glScalef(0.3f, 0.3f, 0.3f);
         wormEyelid.Draw(true, false);
         glPopMatrix();
-        
+
         glPushMatrix();
-        glTranslatef(head->x + 0.6f, head->y - 0.1f, 0.05f);
+        glTranslatef(0.6f, -0.1f, 0.05f);
         glScalef(0.9f, 0.9f, 0.9f);
         wormLips.Draw(true, false);
         glPopMatrix();
 
         glPushMatrix();
-        glTranslatef(head->x, head->y, 0);
         glScalef(0.6f, 0.6f, 0.6f);
         glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
         wormHead.Draw(true, false);
+        glPopMatrix();
         glPopMatrix();
     }
 
@@ -228,14 +260,17 @@ class Worm {
         for (int i = 1; i < body_length; i++) {
             glPushMatrix();
             glTranslatef(body[i].x, body[i].y, 0);
-            glScalef(0.55f, 0.55f, 0.55f);
+            glRotatef(body_rotation[i], 0.0f, 0.0f, 1.0f);
+            glScalef(0.50f, 0.50f, 0.50f);
             glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-            if (i % 2 == 1) {
-                wormBody.Draw(true, false);
-            }
-            else {
-                wormHead.Draw(true, false);
-            }
+            wormHead.Draw(true, false);
+            glPopMatrix();
+            glPushMatrix();
+            glTranslatef(body[i].x - (body[i].x - body[i - 1].x) / 2, body[i].y - (body[i].y - body[i - 1].y) / 2, 0);
+            glRotatef(body_rotation[i], 0.0f, 0.0f, 1.0f);
+            glScalef(0.50f, 0.50f, 0.50f);
+            glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+            wormBody.Draw(true, false);
             glPopMatrix();
         }
     }
@@ -251,6 +286,8 @@ class Worm {
         this->body[0] = head;
         this->head = &this->body[0];
         this->body[1] = {head.x - 1, head.y};
+        this->body_rotation[0] = 0.0f;
+        this->body_rotation[1] = 0.0f;
         this->exit = false;
         this->r_head = 1.0f;
         this->g_head = 0.0f;
@@ -266,6 +303,8 @@ class Worm {
         this->body[0] = new_head;
         this->head = &this->body[0];
         this->body[1] = {new_head.x - 1, new_head.y};
+        this->body_rotation[0] = 0.0f;
+        this->body_rotation[1] = 0.0f;
         this->animation = false;
         this->animation_progress = 0.0f;
         this->exit = false;
@@ -280,7 +319,7 @@ class Worm {
         this->animating_death = false;
     }
 
-    bool to_exit(){
+    bool to_exit() {
         if (this->exit) {
             return true;
         } else {
@@ -288,11 +327,11 @@ class Worm {
         }
     }
 
-    void saliste(){
-        this->exit = false; 
+    void saliste() {
+        this->exit = false;
     }
 
-    bool is_dead_spike(Point &punto_muerte){
+    bool is_dead_spike(Point& punto_muerte) {
         if (this->dead_spike) {
             punto_muerte = this->get_head();
             return true;
@@ -301,7 +340,7 @@ class Worm {
         }
     }
 
-    void start_vacio_death_animation(){
+    void start_vacio_death_animation() {
         // Aca puedo disparar animacion "fantasma"
         // Seteo colores fantasmita
         this->dead_vacio = true;
@@ -313,19 +352,18 @@ class Worm {
         this->b_body = 1.0;
         this->alpha = 0.3;
         for (int i = 0; i < body_length; i++) {
-            animation_start_body[i] = body[i]; // la posicion actual
-            animation_end_body[i].x = body[i].x; // sin movimiento en x, solo quiero que "flote" para arriba
+            animation_start_body[i] = body[i];        // la posicion actual
+            animation_end_body[i].x = body[i].x;      // sin movimiento en x, solo quiero que "flote" para arriba
             animation_end_body[i].y = body[i].y + 99; // y que se mueva hasta muy arriba por eso sumo 99
         }
         animation_progress = 0.0f; // reinicio progreos animacion
-        
     }
 
-    bool animation_vacio_ended(){
+    bool animation_vacio_ended() {
         return this->animation_vacio_end;
     }
 
-    bool is_dead_vacio(){
+    bool is_dead_vacio() {
         if (this->dead_vacio) {
             return true;
         } else {
@@ -333,7 +371,7 @@ class Worm {
         }
     }
 
-    void moriste(){
+    void moriste() {
         this->dead_spike = false;
         this->dead_vacio = false;
     }
@@ -369,11 +407,11 @@ class Worm {
         return *head;
     }
 
-    void set_animating_death(bool entry){
+    void set_animating_death(bool entry) {
         this->animating_death = entry;
     }
 
-    bool is_animating_death(){
+    bool is_animating_death() {
         return this->animating_death;
     }
 };
