@@ -282,10 +282,11 @@ class Worm {
 
   public:
     Worm(Point head) {
-        this->body_length = 2;
+        this->body_length = 3;
         this->body[0] = head;
         this->head = &this->body[0];
         this->body[1] = {head.x - 1, head.y};
+        this->body[2] = {head.x - 2, head.y};
         this->body_rotation[0] = 0.0f;
         this->body_rotation[1] = 0.0f;
         this->exit = false;
@@ -299,10 +300,11 @@ class Worm {
     }
 
     void reset(Point new_head) {
-        this->body_length = 2;
+        this->body_length = 3;
         this->body[0] = new_head;
         this->head = &this->body[0];
         this->body[1] = {new_head.x - 1, new_head.y};
+        this->body[2] = {new_head.x - 2, new_head.y};
         this->body_rotation[0] = 0.0f;
         this->body_rotation[1] = 0.0f;
         this->animation = false;
