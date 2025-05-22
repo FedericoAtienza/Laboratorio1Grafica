@@ -249,6 +249,16 @@ std::vector<Point> Map::cargarUbicaciones(const std::string& nombreArchivo) {
         apple = apple->NextSiblingElement("apple");
     }
 
+    // Pinchos
+    XMLElement* spike = root->FirstChildElement("spikes") ?
+    root->FirstChildElement("spikes")->FirstChildElement("spike") : nullptr;
+    while (spike) {
+        float x = spike->FloatAttribute("x");
+        float y = spike->FloatAttribute("y");
+        spikes.push_back(Spike({x, y}));
+        spike = spike->NextSiblingElement("spike");
+    }
+
     // Entrada (posición del gusano al iniciar)
     XMLElement* spawn = root->FirstChildElement("spawn");
     if (spawn) {
