@@ -248,7 +248,7 @@ void LevelManager::start_death_animation() {
 
         // Direcc aleatoria entre -1 y 1
         p.dx = ((float)rand() / RAND_MAX) * 2.0f - 1.0f;
-        p.dy = 0;//((float)rand() / RAND_MAX) * 2.0f;
+        p.dy = 0;
         p.dz = ((float)rand() / RAND_MAX) * 2.0f - 1.0f;
         death_particulas.push_back(p);
     }
