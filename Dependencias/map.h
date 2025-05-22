@@ -63,7 +63,7 @@ class Map {
 };
 
 Map::Map(int nivel) {
-    std::string load_level = "../Dependencias/level" + std::to_string(nivel) + ".xml";
+    std::string load_level = "../Dependencias/levels/level" + std::to_string(nivel) + ".xml";
     cargarUbicaciones(load_level);
 }
 

@@ -141,7 +141,7 @@ void LevelManager::draw_animation_2() {
 void LevelManager::next_level(){
 
     level += 1; // Aumento el level global 
-    std::string load_level = "../Dependencias/level" + std::to_string(level) + ".xml";
+    std::string load_level = "../Dependencias/levels/level" + std::to_string(level) + ".xml";
     std::cout << "Se cambiara a nivel: " << load_level << std::endl;
     level_map = Map(level);
 }
