@@ -32,7 +32,7 @@ std::array<GLfloat, 4> Light::get_position() {
 void Light::set_position(Point position) {
 	this->position[0] = position.x;
 	this->position[1] = position.y;
-	this->position[2] = 1.0f;
+	this->position[2] = 0.0f;
 	this->position[3] = 1.0f;
 }
 

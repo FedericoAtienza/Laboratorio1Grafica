@@ -187,19 +187,33 @@ class Worm {
 
     void draw_head() {
         glPushMatrix();
-        glTranslatef(head->x + 0.3f, head->y + 0.2f, 0.3f);
-        glScalef(0.25f, 0.25f, 0.25f);
-        glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-        glRotatef(-45.0f, 0.0f, 0.0f, 1.0f);
+        glTranslatef(head->x + 0.3f, head->y + 0.3f, 0.2f);
+        glScalef(0.3f, 0.3f, 0.3f);
         wormEye.Draw(true, false);
         glPopMatrix();
 
         glPushMatrix();
-        glTranslatef(head->x + 0.3f, head->y + 0.2f, -0.3f);
-        glScalef(0.25f, 0.25f, 0.25f);
-        glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-        glRotatef(-45.0f, 0.0f, 0.0f, 1.0f);
+        glTranslatef(head->x + 0.3f, head->y + 0.3f, -0.2f);
+        glScalef(0.3f, 0.3f, 0.3f);
         wormEye.Draw(true, false);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslatef(head->x + 0.3f, head->y + 0.3f, 0.2f);
+        glScalef(0.3f, 0.3f, 0.3f);
+        wormEyelid.Draw(true, false);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslatef(head->x + 0.3f, head->y + 0.3f, -0.2f);
+        glScalef(0.3f, 0.3f, 0.3f);
+        wormEyelid.Draw(true, false);
+        glPopMatrix();
+        
+        glPushMatrix();
+        glTranslatef(head->x + 0.6f, head->y - 0.1f, 0.05f);
+        glScalef(0.9f, 0.9f, 0.9f);
+        wormLips.Draw(true, false);
         glPopMatrix();
 
         glPushMatrix();
@@ -208,7 +222,6 @@ class Worm {
         glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
         wormHead.Draw(true, false);
         glPopMatrix();
-
     }
 
     void draw_body() {

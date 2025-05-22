@@ -103,10 +103,9 @@ int main(int argc, char* argv[]) {
     // Mix_PlayMusic(music, 0);
 
     Light lightSource;
-    lightSource.set_position({0.0f, 3.0f});
+    lightSource.set_position({2.0f, 3.0f});
     lightSource.set_color(1.0f, 1.0f, 1.0f);
 
-    //
     glEnable(GL_LIGHTING);
 
     do {

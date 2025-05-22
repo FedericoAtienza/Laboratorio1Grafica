@@ -11,19 +11,19 @@ C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cur
 C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\Dependencias\map.h(293,23): warning C4267: 'return': conversión de 'size_t' a 'int'; posible pérdida de datos
   (compilando archivo de origen "main.cpp")
   
-C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\Dependencias\worm.h(295,24): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\Dependencias\worm.h(308,24): warning C4305: '=': truncamiento de 'double' a 'float'
   (compilando archivo de origen "main.cpp")
   
-C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\Dependencias\worm.h(296,24): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\Dependencias\worm.h(309,24): warning C4305: '=': truncamiento de 'double' a 'float'
   (compilando archivo de origen "main.cpp")
   
-C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\Dependencias\worm.h(298,24): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\Dependencias\worm.h(311,24): warning C4305: '=': truncamiento de 'double' a 'float'
   (compilando archivo de origen "main.cpp")
   
-C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\Dependencias\worm.h(299,24): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\Dependencias\worm.h(312,24): warning C4305: '=': truncamiento de 'double' a 'float'
   (compilando archivo de origen "main.cpp")
   
-C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\Dependencias\worm.h(301,23): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\Dependencias\worm.h(314,23): warning C4305: '=': truncamiento de 'double' a 'float'
   (compilando archivo de origen "main.cpp")
   
 C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\Dependencias\text.h(10,11): warning C4244: '=': conversión de 'double' a 'int'; posible pérdida de datos
@@ -296,11 +296,11 @@ C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cur
 C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\Dependencias\hud.h(613,50): warning C4244: '=': conversión de 'int' a 'float'; posible pérdida de datos
   (compilando archivo de origen "main.cpp")
   
-C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\Laboratorio1\main.cpp(244,79): warning C4244: 'argumento': conversión de 'Sint32' a 'float'; posible pérdida de datos
-C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\Laboratorio1\main.cpp(244,59): warning C4244: 'argumento': conversión de 'Sint32' a 'float'; posible pérdida de datos
+C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\Laboratorio1\main.cpp(243,79): warning C4244: 'argumento': conversión de 'Sint32' a 'float'; posible pérdida de datos
+C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\Laboratorio1\main.cpp(243,59): warning C4244: 'argumento': conversión de 'Sint32' a 'float'; posible pérdida de datos
   Generando código
-  2 of 1276 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+  1 of 1280 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+    0 functions had inline decision re-evaluated but remain unchanged
   Generación de código finalizada
   Laboratorio1.vcxproj -> C:\Users\User\Desktop\Facultad\Introduccion a la Computacion Grafica\Segunda cursada\Lab 1\Laboratorio1\Laboratorio1Grafica\x64\Release\Laboratorio1.exe
