@@ -78,6 +78,10 @@ class Settings {
 
         glDisable(GL_DEPTH_TEST);
 
+        if (light) {
+            glDisable(GL_LIGHTING);
+        }
+
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
         glLoadIdentity();
@@ -175,6 +179,10 @@ class Settings {
         glPopMatrix();
 
         glEnable(GL_DEPTH_TEST);
+
+        if (light) {
+            glEnable(GL_LIGHTING);
+        }
     }
 
     void switch_light() {

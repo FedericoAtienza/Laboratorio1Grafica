@@ -296,7 +296,10 @@ void HUD::draw() {
     glLoadIdentity();
 
     glDisable(GL_DEPTH_TEST);
-    glDisable(GL_LIGHTING);
+
+    if (light) {
+        glDisable(GL_LIGHTING);
+    }
 
     glEnable(GL_TEXTURE_2D);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -467,7 +470,10 @@ void HUD::draw() {
 
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHTING);
+
+    if (light) {
+        glEnable(GL_LIGHTING);
+    }
 
     glPopMatrix();
     glMatrixMode(GL_PROJECTION);

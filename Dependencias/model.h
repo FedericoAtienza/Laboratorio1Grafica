@@ -35,9 +35,9 @@ class Model {
     }
 
     // Dibuja el modelo, lo cual equivale a dibujar todos sus meshes
-    void Draw(bool conTexturas, bool conRojo) {
+    void Draw(bool conTexturas, bool conRojo, bool fantasma) {
         for (unsigned int i = 0; i < meshes.size(); i++)
-            meshes[i].Draw(conTexturas, conRojo);
+            meshes[i].Draw(conTexturas, conRojo, fantasma);
     }
 
     // Carga el modelo con Assimp y almacena los meshes resultantes en el vector de meshes.

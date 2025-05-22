@@ -22,6 +22,7 @@ class Worm {
     int body_length;
     bool animation;
     bool animating_death; // indica si estan animando muerte x pinchos en level manager
+    bool animating_fall = false;
     float animation_progress;
     float animation_duration; // in seconds (with game speed 1)
     Point animation_start_body[WORM_MAX_LENGTH];
@@ -71,6 +72,7 @@ class Worm {
     void draw();
     Point get_head();
     void set_animating_death(bool entry);
+    void set_animating_fall(bool entry);
     bool is_animating_death();
     void check_explosives();
 };
@@ -251,43 +253,43 @@ void Worm::draw_head() {
     glTranslatef(head->x, head->y, 0);
     glRotatef(body_rotation[0], 0.0f, 0.0f, 1.0f);
 
-    glPushMatrix();
-    glTranslatef(0.3f, 0.3f, 0.2f);
-    glScalef(0.3f, 0.3f, 0.3f);
-    wormEye.Draw(true, false);
-    glPopMatrix();
+        glPushMatrix();
+        glTranslatef(0.3f, 0.3f, 0.2f);
+        glScalef(0.3f, 0.3f, 0.3f);
+        wormEye.Draw(textures, this->animating_death, this->animating_fall);
+        glPopMatrix();
 
-    glPushMatrix();
-    glTranslatef(0.3f, 0.3f, -0.2f);
-    glScalef(0.3f, 0.3f, 0.3f);
-    wormEye.Draw(true, false);
-    glPopMatrix();
+        glPushMatrix();
+        glTranslatef(0.3f, 0.3f, -0.2f);
+        glScalef(0.3f, 0.3f, 0.3f);
+        wormEye.Draw(textures, this->animating_death, this->animating_fall);
+        glPopMatrix();
 
-    glPushMatrix();
-    glTranslatef(0.3f, 0.3f, 0.2f);
-    glScalef(0.3f, 0.3f, 0.3f);
-    wormEyelid.Draw(true, false);
-    glPopMatrix();
+        glPushMatrix();
+        glTranslatef(0.3f, 0.3f, 0.2f);
+        glScalef(0.3f, 0.3f, 0.3f);
+        wormEyelid.Draw(textures, this->animating_death, this->animating_fall);
+        glPopMatrix();
 
-    glPushMatrix();
-    glTranslatef(0.3f, 0.3f, -0.2f);
-    glScalef(0.3f, 0.3f, 0.3f);
-    wormEyelid.Draw(true, false);
-    glPopMatrix();
+        glPushMatrix();
+        glTranslatef(0.3f, 0.3f, -0.2f);
+        glScalef(0.3f, 0.3f, 0.3f);
+        wormEyelid.Draw(textures, this->animating_death, this->animating_fall);
+        glPopMatrix();
 
-    glPushMatrix();
-    glTranslatef(0.6f, -0.1f, 0.05f);
-    glScalef(0.9f, 0.9f, 0.9f);
-    wormLips.Draw(true, false);
-    glPopMatrix();
+        glPushMatrix();
+        glTranslatef(0.6f, -0.1f, 0.05f);
+        glScalef(0.9f, 0.9f, 0.9f);
+        wormLips.Draw(textures, this->animating_death, this->animating_fall);
+        glPopMatrix();
 
-    glPushMatrix();
-    glScalef(0.6f, 0.6f, 0.6f);
-    glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-    wormHead.Draw(true, false);
-    glPopMatrix();
-    glPopMatrix();
-}
+        glPushMatrix();
+        glScalef(0.6f, 0.6f, 0.6f);
+        glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+        wormHead.Draw(textures, this->animating_death, this->animating_fall);
+        glPopMatrix();
+        glPopMatrix();
+    }
 
 void Worm::draw_body() {
     for (int i = 1; i < body_length; i++) {
@@ -296,14 +298,14 @@ void Worm::draw_body() {
         glRotatef(body_rotation[i], 0.0f, 0.0f, 1.0f);
         glScalef(0.50f, 0.50f, 0.50f);
         glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-        wormHead.Draw(true, false);
+        wormHead.Draw(textures, this->animating_death, this->animating_fall);
         glPopMatrix();
         glPushMatrix();
         glTranslatef(body[i].x - (body[i].x - body[i - 1].x) / 2, body[i].y - (body[i].y - body[i - 1].y) / 2, 0);
         glRotatef(body_rotation[i], 0.0f, 0.0f, 1.0f);
         glScalef(0.50f, 0.50f, 0.50f);
         glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-        wormBody.Draw(true, false);
+        wormBody.Draw(textures, this->animating_death, this->animating_fall);
         glPopMatrix();
     }
 }
@@ -351,6 +353,7 @@ void Worm::reset(Point new_head) {
     this->alpha = 1.0; // inicialmente opaco
     this->animation_vacio_end = false;
     this->animating_death = false;
+    this->animating_fall = false;
 }
 
 bool Worm::to_exit() {
@@ -443,6 +446,10 @@ Point Worm::get_head() {
 
 void Worm::set_animating_death(bool entry) {
     this->animating_death = entry;
+}
+
+void Worm::set_animating_fall(bool entry) {
+    this->animating_fall = entry;
 }
 
 bool Worm::is_animating_death() {

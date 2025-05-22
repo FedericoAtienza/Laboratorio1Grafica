@@ -106,10 +106,11 @@ int main(int argc, char* argv[]) {
     // Mix_PlayMusic(music, 0);
 
     Light lightSource;
-    lightSource.set_position({2.0f, 3.0f});
+    lightSource.set_position({2.0f, 1.0f});
     lightSource.set_color(1.0f, 1.0f, 1.0f);
 
-    glEnable(GL_LIGHTING);
+    // La luz inicializa apagada
+    glDisable(GL_LIGHTING);
 
     do {
         // Cuanto tardo en procesar el frame
@@ -178,6 +179,7 @@ int main(int argc, char* argv[]) {
         // Es true una vez que cayo al vacio y termino su animacion de fantasma
         if (worm.is_dead_vacio()) {
             worm.start_vacio_death_animation();
+            worm.set_animating_fall(true);
             my_hud.show_you_died();
             worm.moriste();
         }

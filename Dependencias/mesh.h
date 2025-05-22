@@ -32,22 +32,34 @@ class Mesh {
     }
 
     // Dibuja el mesh
-    void Draw(bool conTexturas, bool conRojo) {
-        if (conTexturas) {
+    void Draw(bool conTexturas, bool conRojo, bool fantasma) {
+        if (conTexturas && !fantasma) {
             // Preparacion de las texturas, si deben ser dibujadas
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, textures[0].id);
         }
 
         Vertex ver1, ver2, ver3;
+        float r, g, b, a;
+
+        r = 1.0f;
+        g = 1.0f;
+        b = 1.0f;
+        a = 1.0f;
 
         auto iterador = indices.begin();
         float colorAux;
 
-        if (conRojo) {
-            colorAux = 0;
-        } else {
-            colorAux = 1;
+        if (conRojo && !fantasma) {
+            g = 0.0f;
+            b = 0.0f;
+        }
+
+        if (fantasma && !conRojo) {
+            r = 0.6f;
+            g = 0.9f;
+            b = 1.0f;
+            a = 0.3f;
         }
 
         // Tres vertices tomados del vector de indices ser�n los que formaran un triangulo a dibujar,
@@ -61,7 +73,7 @@ class Mesh {
             iterador++;
 
             glBegin(GL_TRIANGLES);
-            glColor3f(1, colorAux, colorAux);
+            glColor4f(r, g, b, a);
             glNormal3f(ver1.Normal.x, ver1.Normal.y, ver1.Normal.z);
             glTexCoord2f(ver1.TexCoords.x, ver1.TexCoords.y);
             glVertex3f(ver1.Position.x, ver1.Position.y, ver1.Position.z);

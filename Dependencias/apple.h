@@ -52,7 +52,7 @@ void Apple::draw() {
 
     glRotatef(animationCounter, 0.0f, 1.0f, 0.0f);
 
-    appleModel.Draw(textures, false);
+    appleModel.Draw(textures, false, false);
     glPopMatrix();
 }
 

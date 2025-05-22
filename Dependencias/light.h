@@ -45,18 +45,9 @@ void Light::set_color(float r, float g, float b) {
 
 void Light::draw() {
 
-	//glDisable(GL_LIGHTING);
-
 	GLfloat glPosition[4] = { position[0], position[1], position[2], position[3] };
 	GLfloat glColor[4] = { color[0], color[1], color[2], color[3] };
 
-	/*glPushMatrix();
-	glTranslatef(this->position[0], this->position[1], this->position[2]);
-	glColor3f(1.0f, 1.0f, 1.0f);
-	drawCube(0.5f);
-	glPopMatrix();*/
-
-	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	glLightfv(GL_LIGHT0, GL_POSITION, glPosition);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, glColor);

@@ -41,7 +41,7 @@ void Spike::draw() {
     glTranslatef(position.x, position.y, 0);
     glTranslatef(0.0f, -0.45f, 0.0f);
     glScalef(0.6f, 0.6f, 0.6f);
-    spikeModel.Draw(textures, false);
+    spikeModel.Draw(textures, false, false);
     glPopMatrix();
 }
 
