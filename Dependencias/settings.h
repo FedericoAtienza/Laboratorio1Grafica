@@ -40,6 +40,16 @@ class Settings {
 
         pauseTexture = generate_text(font, "Pausa", {255, 255, 255});
 
+        playTexture = generate_text(font, "Jugar", { 255, 255, 255 });
+
+        quitTexture = generate_text(font, "Salir", { 255, 255, 255 });
+
+        playSelectedTexture = generate_text(font, "Jugar", { 255, 255, 0 });
+
+        quitSelectedTexture = generate_text(font, "Salir", { 255, 255, 0 });
+
+        backgroundTexture = LoadTexture("../Dependencias/background.png");
+
         frameTexture = LoadTexture("../Dependencias/MarcoSettings.png");
 
         frame2Texture = LoadTexture("../Dependencias/prueba.png");
@@ -185,6 +195,51 @@ class Settings {
         }
     }
 
+    void draw_main_menu() {
+        glDisable(GL_DEPTH_TEST);
+
+        if (light) {
+            glDisable(GL_LIGHTING);
+        }
+
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+        gluOrtho2D(0.0, 1.0, 1.0, 0.0);
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
+
+        // DIBUJO "IMAGEN FONDO MENU"
+        draw_frame({ 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, backgroundTexture });
+
+        // DIBUJO "JUGAR"
+        if (playSelected) {
+            draw_frame({ 0.42f, 0.57f, 0.92f, 0.82f, 0.0f, 1.0f, 0.0f, 1.0f, playSelectedTexture });
+        } else {
+            draw_frame({ 0.42f, 0.57f, 0.92f, 0.82f, 0.0f, 1.0f, 0.0f, 1.0f, playTexture });
+        }
+
+        // DIBUJO "SALIR"
+        if (!playSelected) {
+            draw_frame({ 0.42f, 0.57f, 0.97f, 0.92f, 0.0f, 1.0f, 0.0f, 1.0f, quitSelectedTexture });
+        } else {
+            draw_frame({ 0.42f, 0.57f, 0.97f, 0.92f, 0.0f, 1.0f, 0.0f, 1.0f, quitTexture });
+        }
+
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
+        glPopMatrix();
+
+        glEnable(GL_DEPTH_TEST);
+
+        if (light) {
+            glEnable(GL_LIGHTING);
+        }
+
+    }
+
     void switch_light() {
         if (light) {
             Mix_PlayChannel(-1, sfx_menu_option_disable, 0);
@@ -282,7 +337,8 @@ class Settings {
   private:
     GLuint wireframeTexture, shadeModelTexture, shadeModelTexture2,
         speedTexture, showTexturesTexture, titleTexture, frameTexture, frame2Texture,
-        boxTexture, lightTexture, speed1Texture, speed2Texture, speed4Texture, pauseTexture;
+        boxTexture, lightTexture, speed1Texture, speed2Texture, speed4Texture, pauseTexture,
+        playTexture, playSelectedTexture, quitTexture, quitSelectedTexture, backgroundTexture;
 
     void draw_frame(frame data) {
         glEnable(GL_TEXTURE_2D);

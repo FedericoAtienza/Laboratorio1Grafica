@@ -34,6 +34,10 @@ bool fullscreen = false;
 
 bool opciones = false;
 
+bool playSelected = true;
+
+bool inMainMenu = true;
+
 // Audio
 int audio = Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048); // Initialize audio
 
