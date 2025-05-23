@@ -301,10 +301,6 @@ void HUD::draw() {
         glDisable(GL_LIGHTING);
     }
 
-    glEnable(GL_TEXTURE_2D);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
     int x_frame = 10;
@@ -313,6 +309,7 @@ void HUD::draw() {
     int separacion = 10;
 
     // 0. Dibujo carta/marco
+    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, carta_texture);
     glBegin(GL_QUADS);
     glTexCoord2f(0, 0);
