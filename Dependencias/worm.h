@@ -210,6 +210,11 @@ void Worm::grow_while_moving() {
 }
 
 bool Worm::is_allowed_to_move(Point move_to) {
+    // Check if the worm is dead
+    if (animating_death) {
+        return false;
+    }
+
     // Check if is doing the animation
     if (animation)
         return false;
@@ -253,43 +258,43 @@ void Worm::draw_head() {
     glTranslatef(head->x, head->y, 0);
     glRotatef(body_rotation[0], 0.0f, 0.0f, 1.0f);
 
-        glPushMatrix();
-        glTranslatef(0.3f, 0.3f, 0.2f);
-        glScalef(0.3f, 0.3f, 0.3f);
-        wormEye.Draw(textures, this->animating_death, this->animating_fall);
-        glPopMatrix();
+    glPushMatrix();
+    glTranslatef(0.3f, 0.3f, 0.2f);
+    glScalef(0.3f, 0.3f, 0.3f);
+    wormEye.Draw(textures, this->animating_death, this->animating_fall);
+    glPopMatrix();
 
-        glPushMatrix();
-        glTranslatef(0.3f, 0.3f, -0.2f);
-        glScalef(0.3f, 0.3f, 0.3f);
-        wormEye.Draw(textures, this->animating_death, this->animating_fall);
-        glPopMatrix();
+    glPushMatrix();
+    glTranslatef(0.3f, 0.3f, -0.2f);
+    glScalef(0.3f, 0.3f, 0.3f);
+    wormEye.Draw(textures, this->animating_death, this->animating_fall);
+    glPopMatrix();
 
-        glPushMatrix();
-        glTranslatef(0.3f, 0.3f, 0.2f);
-        glScalef(0.3f, 0.3f, 0.3f);
-        wormEyelid.Draw(textures, this->animating_death, this->animating_fall);
-        glPopMatrix();
+    glPushMatrix();
+    glTranslatef(0.3f, 0.3f, 0.2f);
+    glScalef(0.3f, 0.3f, 0.3f);
+    wormEyelid.Draw(textures, this->animating_death, this->animating_fall);
+    glPopMatrix();
 
-        glPushMatrix();
-        glTranslatef(0.3f, 0.3f, -0.2f);
-        glScalef(0.3f, 0.3f, 0.3f);
-        wormEyelid.Draw(textures, this->animating_death, this->animating_fall);
-        glPopMatrix();
+    glPushMatrix();
+    glTranslatef(0.3f, 0.3f, -0.2f);
+    glScalef(0.3f, 0.3f, 0.3f);
+    wormEyelid.Draw(textures, this->animating_death, this->animating_fall);
+    glPopMatrix();
 
-        glPushMatrix();
-        glTranslatef(0.6f, -0.1f, 0.05f);
-        glScalef(0.9f, 0.9f, 0.9f);
-        wormLips.Draw(textures, this->animating_death, this->animating_fall);
-        glPopMatrix();
+    glPushMatrix();
+    glTranslatef(0.6f, -0.1f, 0.05f);
+    glScalef(0.9f, 0.9f, 0.9f);
+    wormLips.Draw(textures, this->animating_death, this->animating_fall);
+    glPopMatrix();
 
-        glPushMatrix();
-        glScalef(0.6f, 0.6f, 0.6f);
-        glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-        wormHead.Draw(textures, this->animating_death, this->animating_fall);
-        glPopMatrix();
-        glPopMatrix();
-    }
+    glPushMatrix();
+    glScalef(0.6f, 0.6f, 0.6f);
+    glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+    wormHead.Draw(textures, this->animating_death, this->animating_fall);
+    glPopMatrix();
+    glPopMatrix();
+}
 
 void Worm::draw_body() {
     for (int i = 1; i < body_length; i++) {

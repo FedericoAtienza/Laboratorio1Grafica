@@ -113,140 +113,173 @@ int main(int argc, char* argv[]) {
     glDisable(GL_LIGHTING);
 
     do {
-        if (!inMainMenu) {
-            // Cuanto tardo en procesar el frame
-            frame_actual = SDL_GetTicks();
-            // Calculo el tiempo que paso desde el frame anterior
-            deltaTime = (frame_actual - frame_previo) / 1000.0f;
-            // Tiempo del frame "previo" se transforma en el frame que se acabo de dibujar, asi el "actual" sera el siguiente
-            frame_previo = frame_actual;
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glLoadIdentity();
 
-            if (pause) {
-                // Si el juego esta en pausa, no se actualiza el tiempo
-                deltaTime = 0.0f;
-            }
-
-            my_hud.update();
-
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            glLoadIdentity();
-
-            camera.setViewMatrix();
-
-            // Dibujo la luz
-            if (light) {
-                lightSource.draw();
-            }
-
-            // Dibujo la skybox
-            DrawSkybox(1000.0f);
-
-            // Controlo explosivos
-            worm.check_explosives();
-
-            // Dibujo el mapa
-            level_map.draw();
-
-            /*                        */
-            /* seccion CHEQUEO MUERTE */
-
-            Point punto_muerte;
-            if (worm.is_dead_spike(punto_muerte)) { // tiene que retornar ubicacion
-                // Invoco animacion muerte
-                level_manager.set_dead_animation_point(punto_muerte);
-                worm.set_animating_death(true);
-                level_manager.start_death_animation();
-                worm.moriste();
-            }
-
-            if (level_manager.is_animating_death()) {
-                level_manager.draw_animation_death();
-                my_hud.show_you_died();
-            }
-
-            if (level_manager.update_death_animation(deltaTime)) {
-                // Una vez muere por pinchos:
-                // 1. reseteo el nivel (reconstruyendo manzanas)
-                // 2. reseteo manzanas en el hud
-                // 3. gusano vuelve a spawn y con el largo inicial
-                worm.set_animating_death(false);
-                level_manager.reset();
-                my_hud.reset_except_timer();
-                spawn = level_map.get_spawn();
-                worm.reset({ spawn.x, spawn.y }); // Aca le paso la nueva posicion inicial
-                my_hud.hide_you_died();
-            }
-
-            // Es true una vez que cayo al vacio y termino su animacion de fantasma
-            if (worm.is_dead_vacio()) {
-                worm.start_vacio_death_animation();
-                worm.set_animating_fall(true);
-                my_hud.show_you_died();
-                worm.moriste();
-            }
-
-            if (worm.animation_vacio_ended()) {
-                level_manager.reset();
-                my_hud.reset_except_timer();
-                Point spawn = level_map.get_spawn();
-                worm.reset({ spawn.x, spawn.y }); // Aca le paso la nueva posicion inicial
-                my_hud.hide_you_died();
-            }
-
-            /* fin secc chequeo muerte */
-            /*                         */
-
-            /*                         */
-            /* seccion CAMBIO DE NIVEL */
-
-            // Controlo si debo involar al level manager
-            if (worm.to_exit()) {
-                level_manager.set_animation_point(level_map.get_exit());
-                level_manager.start_animation();
-                worm.saliste();
-            }
-
-            // Animacion next level
-            if (level_manager.update_animation(deltaTime)) {
-                // Donde spawneara el gusano el prox nivel
-                Point spawn = level_map.get_spawn();
-                worm.reset({ spawn.x, spawn.y }); // Aca le paso la nueva posicion inicial
-                my_hud.update_level_number();   // Actualiza datos del hud correspondientes a sig nivel
-                my_hud.hide_next_level();
-            }
-
-            // Comienzan animaciones de next level
-            if (level_manager.is_animating()) {
-                level_manager.draw_animation_1();
-                level_manager.draw_animation_2();
-                my_hud.show_next_level();
-            }
-
-            /* fin secc cambio nivel */
-            /*                       */
-
-            // Dibujo el worm
-            worm.draw();
-
-            // Dibujo el HUD
-            if (wireframe) {
-                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                my_hud.draw();
-                settings.draw_settings();
-                settings.draw_pause();
-                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            }
-            else {
-                my_hud.draw();
-                settings.draw_settings();
-                settings.draw_pause();
-            }
-        } else {
+        // Main menu
+        // Si el juego no se inicio, muestro el menu principal
+        if (inMainMenu) {
             settings.draw_main_menu();
+
+            while (SDL_PollEvent(&evento)) { // Procesa eventos del menu
+                switch (evento.type) {
+                case SDL_QUIT:
+                    fin = true;
+                    break;
+                case SDL_KEYUP:
+                    switch (evento.key.keysym.sym) {
+                    case SDLK_UP:
+                        playSelected = true;
+                        break;
+                    case SDLK_DOWN:
+                        playSelected = false;
+                        break;
+                    case SDLK_ESCAPE:
+                        fin = true;
+                        break;
+                    case SDLK_q:
+                        fin = true;
+                        break;
+                    case SDLK_RETURN:
+                        if (playSelected) {
+                            inMainMenu = false;
+                            frame_previo = SDL_GetTicks();
+                        } else {
+                            fin = true;
+                        }
+                        break;
+                    }
+                }
+            }
+            // Si el juego no se inicio, no se hace nada mas
+            SDL_GL_SwapWindow(win);
+            continue;
+        }
+
+        // Cuanto tardo en procesar el frame
+        frame_actual = SDL_GetTicks();
+        // Calculo el tiempo que paso desde el frame anterior
+        deltaTime = (frame_actual - frame_previo) / 1000.0f;
+        // Tiempo del frame "previo" se transforma en el frame que se acabo de dibujar, asi el "actual" sera el siguiente
+        frame_previo = frame_actual;
+
+        if (pause) {
+            // Si el juego esta en pausa, no se actualiza el tiempo
+            deltaTime = 0.0f;
+        }
+
+        my_hud.update();
+
+        camera.setViewMatrix();
+
+        // Dibujo la luz
+        lightSource.draw();
+
+        // Dibujo la skybox
+        DrawSkybox(1000.0f);
+
+        // Controlo explosivos
+        worm.check_explosives();
+
+        // Dibujo el mapa
+        level_map.draw();
+
+        /*                        */
+        /* seccion CHEQUEO MUERTE */
+
+        Point punto_muerte;
+        if (worm.is_dead_spike(punto_muerte)) { // tiene que retornar ubicacion
+            // Invoco animacion muerte
+            level_manager.set_dead_animation_point(punto_muerte);
+            worm.set_animating_death(true);
+            level_manager.start_death_animation();
+            worm.moriste();
+        }
+
+        if (level_manager.is_animating_death()) {
+            level_manager.draw_animation_death();
+            my_hud.show_you_died();
+        }
+
+        if (level_manager.update_death_animation(deltaTime)) {
+            // Una vez muere por pinchos:
+            // 1. reseteo el nivel (reconstruyendo manzanas)
+            // 2. reseteo manzanas en el hud
+            // 3. gusano vuelve a spawn y con el largo inicial
+            worm.set_animating_death(false);
+            level_manager.reset();
+            my_hud.reset_except_timer();
+            spawn = level_map.get_spawn();
+            worm.reset({spawn.x, spawn.y}); // Aca le paso la nueva posicion inicial
+            my_hud.hide_you_died();
+        }
+
+        // Es true una vez que cayo al vacio y termino su animacion de fantasma
+        if (worm.is_dead_vacio()) {
+            worm.start_vacio_death_animation();
+            worm.set_animating_fall(true);
+            my_hud.show_you_died();
+            worm.moriste();
+        }
+
+        if (worm.animation_vacio_ended()) {
+            level_manager.reset();
+            my_hud.reset_except_timer();
+            Point spawn = level_map.get_spawn();
+            worm.reset({spawn.x, spawn.y}); // Aca le paso la nueva posicion inicial
+            my_hud.hide_you_died();
+        }
+
+        /* fin secc chequeo muerte */
+        /*                         */
+
+        /*                         */
+        /* seccion CAMBIO DE NIVEL */
+
+        // Controlo si debo involar al level manager
+        if (worm.to_exit()) {
+            level_manager.set_animation_point(level_map.get_exit());
+            level_manager.start_animation();
+            worm.saliste();
+        }
+
+        // Animacion next level
+        if (level_manager.update_animation(deltaTime)) {
+            // Donde spawneara el gusano el prox nivel
+            Point spawn = level_map.get_spawn();
+            worm.reset({spawn.x, spawn.y}); // Aca le paso la nueva posicion inicial
+            my_hud.update_level_number();   // Actualiza datos del hud correspondientes a sig nivel
+            my_hud.hide_next_level();
+        }
+
+        // Comienzan animaciones de next level
+        if (level_manager.is_animating()) {
+            level_manager.draw_animation_1();
+            level_manager.draw_animation_2();
+            my_hud.show_next_level();
+        }
+
+        /* fin secc cambio nivel */
+        /*                       */
+
+        // Dibujo el worm
+        worm.draw();
+
+        // Dibujo el HUD
+        if (wireframe) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            my_hud.draw();
+            settings.draw_settings();
+            settings.draw_pause();
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        } else {
+            my_hud.draw();
+            settings.draw_settings();
+            settings.draw_pause();
         }
 
         while (SDL_PollEvent(&evento)) {
-            if (!pause && (!worm.is_animating_death()) && !inMainMenu) {
+            if (!pause) { // Si el juego no esta en pausa, se procesan los eventos del mouse y movimiento del gusano
                 switch (evento.type) {
                 case SDL_MOUSEMOTION:
                     camera.handleMouseMotion(evento.motion.xrel, evento.motion.yrel);
@@ -268,83 +301,45 @@ int main(int argc, char* argv[]) {
                     }
                 }
             }
-            else if (inMainMenu) {
-                switch (evento.type) {
-                case SDL_KEYUP:
-                    switch (evento.key.keysym.sym) {
-                    case SDLK_UP:
-                        if (!playSelected) {
-                            playSelected = true;
-                        }
-                        break;
-                    case SDLK_DOWN:
-                        if (playSelected) {
-                            playSelected = false;
-                        }
-                        break;
-                    }
-                }
-            }
             switch (evento.type) {
             case SDL_QUIT:
                 fin = true;
                 break;
             case SDL_KEYUP:
-                if (!inMainMenu) {
-                    switch (evento.key.keysym.sym) {
-                    case SDLK_ESCAPE:
-                        fin = true;
-                        break;
-                    case SDLK_q:
-                        fin = true;
-                        break;
-                    case SDLK_l:
-                        settings.switch_light();
-                        break;
-                    case SDLK_x:
-                        settings.switch_wireframe();
-                        break;
-                    case SDLK_z:
-                        settings.switch_shadeModel();
-                        break;
-                    case SDLK_t:
-                        settings.switch_textures();
-                        break;
-                    case SDLK_RETURN:
-                        settings.switch_opciones();
-                        break;
-                    case SDLK_v:
-                        settings.switch_speed();
-                        break;
-                    case SDLK_f:
-                        settings.switch_fullscreen(win);
-                        break;
-                    case SDLK_p:
-                        settings.switch_pause();
-                        break;
-                    case SDLK_c:
-                        camera.changeCameraType();
-                        break;
-                    }
-                }
-                else {
-                    switch (evento.key.keysym.sym) {
-                    case SDLK_ESCAPE:
-                        fin = true;
-                        break;
-                    case SDLK_q:
-                        fin = true;
-                        break;
-                    case SDLK_RETURN:
-                        if (playSelected) {
-                            inMainMenu = false;
-                            frame_previo = SDL_GetTicks();
-                        }
-                        else {
-                            fin = true;
-                        }
-                        break;
-                    }
+                switch (evento.key.keysym.sym) {
+                case SDLK_ESCAPE:
+                    fin = true;
+                    break;
+                case SDLK_q:
+                    fin = true;
+                    break;
+                case SDLK_l:
+                    settings.switch_light();
+                    break;
+                case SDLK_x:
+                    settings.switch_wireframe();
+                    break;
+                case SDLK_z:
+                    settings.switch_shadeModel();
+                    break;
+                case SDLK_t:
+                    settings.switch_textures();
+                    break;
+                case SDLK_RETURN:
+                    settings.switch_opciones();
+                    break;
+                case SDLK_v:
+                    settings.switch_speed();
+                    break;
+                case SDLK_f:
+                    settings.switch_fullscreen(win);
+                    break;
+                case SDLK_p:
+                    settings.switch_pause();
+                    break;
+                case SDLK_c:
+                    camera.changeCameraType();
+                    break;
                 }
                 break;
             }
