@@ -54,7 +54,7 @@ class Camera {
 };
 
 Camera::Camera() {
-    setCameraTypeFreeCamera();
+    setCameraTypeForthPerson();
 }
 
 void Camera::updateCameraVectors() {
@@ -112,18 +112,9 @@ void Camera::handleMovementKeys() {
     }
     if (cameraType == FORTH_PERSON) {
         // Handle movement
-        if (state[SDL_SCANCODE_W]) {
-            cameraPosY += cameraSpeed;
-        }
-        if (state[SDL_SCANCODE_S]) {
-            cameraPosY -= cameraSpeed;
-        }
-        if (state[SDL_SCANCODE_A]) {
-            cameraPosX -= cameraSpeed;
-        }
-        if (state[SDL_SCANCODE_D]) {
-            cameraPosX += cameraSpeed;
-        }
+        Point wormHead = worm.get_head();
+        cameraPosX = wormHead.x;
+        cameraPosY = wormHead.y + 1.0f;
     }
     if (cameraType == FREE_CAMERA) {
         updateViewVectors();
@@ -172,8 +163,9 @@ void Camera::setCameraTypeForthPerson() {
     yaw = -90.0f;
     pitch = 0.0f;
 
-    cameraPosX = 0.0f;
-    cameraPosY = 2.0f;
+    Point wormHead = worm.get_head();
+    cameraPosX = wormHead.x;
+    cameraPosY = wormHead.y + 1.0f;
     cameraPosZ = 10.0f;
 
     cameraFrontX = 0.0f;
