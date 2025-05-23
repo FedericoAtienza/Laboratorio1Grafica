@@ -40,13 +40,13 @@ class Settings {
 
         pauseTexture = generate_text(font, "Pausa", {255, 255, 255});
 
-        playTexture = generate_text(font, "Jugar", { 255, 255, 255 });
+        playTexture = generate_text(font, "Jugar", {255, 255, 255});
 
-        quitTexture = generate_text(font, "Salir", { 255, 255, 255 });
+        quitTexture = generate_text(font, "Salir", {255, 255, 255});
 
-        playSelectedTexture = generate_text(font, "Jugar", { 255, 255, 0 });
+        playSelectedTexture = generate_text(font, "Jugar", {255, 255, 0});
 
-        quitSelectedTexture = generate_text(font, "Salir", { 255, 255, 0 });
+        quitSelectedTexture = generate_text(font, "Salir", {255, 255, 0});
 
         backgroundTexture = LoadTexture("../Dependencias/background.png");
 
@@ -211,20 +211,20 @@ class Settings {
         glLoadIdentity();
 
         // DIBUJO "IMAGEN FONDO MENU"
-        draw_frame({ 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, backgroundTexture });
+        draw_frame({0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, backgroundTexture});
 
         // DIBUJO "JUGAR"
         if (playSelected) {
-            draw_frame({ 0.42f, 0.57f, 0.92f, 0.82f, 0.0f, 1.0f, 0.0f, 1.0f, playSelectedTexture });
+            draw_frame({0.42f, 0.57f, 0.92f, 0.82f, 0.0f, 1.0f, 0.0f, 1.0f, playSelectedTexture});
         } else {
-            draw_frame({ 0.42f, 0.57f, 0.92f, 0.82f, 0.0f, 1.0f, 0.0f, 1.0f, playTexture });
+            draw_frame({0.42f, 0.57f, 0.92f, 0.82f, 0.0f, 1.0f, 0.0f, 1.0f, playTexture});
         }
 
         // DIBUJO "SALIR"
         if (!playSelected) {
-            draw_frame({ 0.42f, 0.57f, 0.97f, 0.92f, 0.0f, 1.0f, 0.0f, 1.0f, quitSelectedTexture });
+            draw_frame({0.42f, 0.57f, 0.97f, 0.92f, 0.0f, 1.0f, 0.0f, 1.0f, quitSelectedTexture});
         } else {
-            draw_frame({ 0.42f, 0.57f, 0.97f, 0.92f, 0.0f, 1.0f, 0.0f, 1.0f, quitTexture });
+            draw_frame({0.42f, 0.57f, 0.97f, 0.92f, 0.0f, 1.0f, 0.0f, 1.0f, quitTexture});
         }
 
         glMatrixMode(GL_PROJECTION);
@@ -237,7 +237,20 @@ class Settings {
         if (light) {
             glEnable(GL_LIGHTING);
         }
+    }
 
+    void updateDeltaTime() {
+        // Cuanto tardo en procesar el frame
+        frame_actual = SDL_GetTicks();
+        // Calculo el tiempo que paso desde el frame anterior
+        deltaTime = (frame_actual - frame_previo) / 1000.0f;
+        // Tiempo del frame "previo" se transforma en el frame que se acabo de dibujar, asi el "actual" sera el siguiente
+        frame_previo = frame_actual;
+
+        if (pause) {
+            // Si el juego esta en pausa, no se actualiza el tiempo
+            deltaTime = 0.0f;
+        }
     }
 
     void switch_light() {

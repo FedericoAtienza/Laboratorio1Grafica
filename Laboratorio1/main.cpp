@@ -23,9 +23,9 @@
 #include "camera.h"
 #include "settings.h"
 #include "variables.h"
-#include "level_manager.h"
-#include "worm.h"
 #include "hud.h"
+#include "worm.h"
+#include "level_manager.h"
 #include "light.h"
 
 using namespace std;
@@ -156,17 +156,7 @@ int main(int argc, char* argv[]) {
             continue;
         }
 
-        // Cuanto tardo en procesar el frame
-        frame_actual = SDL_GetTicks();
-        // Calculo el tiempo que paso desde el frame anterior
-        deltaTime = (frame_actual - frame_previo) / 1000.0f;
-        // Tiempo del frame "previo" se transforma en el frame que se acabo de dibujar, asi el "actual" sera el siguiente
-        frame_previo = frame_actual;
-
-        if (pause) {
-            // Si el juego esta en pausa, no se actualiza el tiempo
-            deltaTime = 0.0f;
-        }
+        settings.updateDeltaTime();
 
         my_hud.update();
 
@@ -184,83 +174,11 @@ int main(int argc, char* argv[]) {
         // Dibujo el mapa
         level_map.draw();
 
-        /*                        */
-        /* seccion CHEQUEO MUERTE */
+        // Chequeo si el gusano murio por pinchos o vacio
+        level_manager.chequeo_muerte(my_hud);
 
-        Point punto_muerte;
-        if (worm.is_dead_spike(punto_muerte)) { // tiene que retornar ubicacion
-            // Invoco animacion muerte
-            level_manager.set_dead_animation_point(punto_muerte);
-            worm.set_animating_death(true);
-            level_manager.start_death_animation();
-            worm.moriste();
-        }
-
-        if (level_manager.is_animating_death()) {
-            level_manager.draw_animation_death();
-            my_hud.show_you_died();
-        }
-
-        if (level_manager.update_death_animation(deltaTime)) {
-            // Una vez muere por pinchos:
-            // 1. reseteo el nivel (reconstruyendo manzanas)
-            // 2. reseteo manzanas en el hud
-            // 3. gusano vuelve a spawn y con el largo inicial
-            worm.set_animating_death(false);
-            level_manager.reset();
-            my_hud.reset_except_timer();
-            spawn = level_map.get_spawn();
-            worm.reset({spawn.x, spawn.y}); // Aca le paso la nueva posicion inicial
-            my_hud.hide_you_died();
-        }
-
-        // Es true una vez que cayo al vacio y termino su animacion de fantasma
-        if (worm.is_dead_vacio()) {
-            worm.start_vacio_death_animation();
-            worm.set_animating_fall(true);
-            my_hud.show_you_died();
-            worm.moriste();
-        }
-
-        if (worm.animation_vacio_ended()) {
-            level_manager.reset();
-            my_hud.reset_except_timer();
-            Point spawn = level_map.get_spawn();
-            worm.reset({spawn.x, spawn.y}); // Aca le paso la nueva posicion inicial
-            my_hud.hide_you_died();
-        }
-
-        /* fin secc chequeo muerte */
-        /*                         */
-
-        /*                         */
-        /* seccion CAMBIO DE NIVEL */
-
-        // Controlo si debo involar al level manager
-        if (worm.to_exit()) {
-            level_manager.set_animation_point(level_map.get_exit());
-            level_manager.start_animation();
-            worm.saliste();
-        }
-
-        // Animacion next level
-        if (level_manager.update_animation(deltaTime)) {
-            // Donde spawneara el gusano el prox nivel
-            Point spawn = level_map.get_spawn();
-            worm.reset({spawn.x, spawn.y}); // Aca le paso la nueva posicion inicial
-            my_hud.update_level_number();   // Actualiza datos del hud correspondientes a sig nivel
-            my_hud.hide_next_level();
-        }
-
-        // Comienzan animaciones de next level
-        if (level_manager.is_animating()) {
-            level_manager.draw_animation_1();
-            level_manager.draw_animation_2();
-            my_hud.show_next_level();
-        }
-
-        /* fin secc cambio nivel */
-        /*                       */
+        // Chequeo si el gusano salio del mapa
+        level_manager.chequeo_cambio_de_nivel(my_hud);
 
         // Dibujo el worm
         worm.draw();

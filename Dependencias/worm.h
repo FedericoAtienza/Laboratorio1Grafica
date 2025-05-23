@@ -169,12 +169,10 @@ void Worm::animation_move(float animation_progress) {
     }
     if (body[0].y < -5) {
         cayo_al_vacio = true;
-    } else if (body[0].y > 8) {
-        animation_vacio_end = true;
-    }
-    if (cayo_al_vacio) {
         animation_vacio_end = false;
         this->dead_vacio = true;
+    } else if (body[0].y > 8) {
+        animation_vacio_end = true;
     }
 }
 
