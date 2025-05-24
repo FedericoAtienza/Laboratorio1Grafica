@@ -215,16 +215,16 @@ class Settings {
 
         // DIBUJO "JUGAR"
         if (playSelected) {
-            draw_frame({0.42f, 0.57f, 0.92f, 0.82f, 0.0f, 1.0f, 0.0f, 1.0f, playSelectedTexture});
-        } else {
-            draw_frame({0.42f, 0.57f, 0.92f, 0.82f, 0.0f, 1.0f, 0.0f, 1.0f, playTexture});
-        }
+            draw_frame({0.44f, 0.56f, 0.66f, 0.56f, 0.0f, 1.0f, 0.0f, 1.0f, playSelectedTexture});
 
+        } else {
+            draw_frame({0.44f, 0.56f, 0.66f, 0.56f, 0.0f, 1.0f, 0.0f, 1.0f, playTexture});
+        }
         // DIBUJO "SALIR"
         if (!playSelected) {
-            draw_frame({0.42f, 0.57f, 0.97f, 0.92f, 0.0f, 1.0f, 0.0f, 1.0f, quitSelectedTexture});
+            draw_frame({0.45f, 0.57f, 0.69f, 0.64f, 0.0f, 1.0f, 0.0f, 1.0f, quitSelectedTexture});
         } else {
-            draw_frame({0.42f, 0.57f, 0.97f, 0.92f, 0.0f, 1.0f, 0.0f, 1.0f, quitTexture});
+            draw_frame({0.45f, 0.57f, 0.69f, 0.64f, 0.0f, 1.0f, 0.0f, 1.0f, quitTexture});
         }
 
         glMatrixMode(GL_PROJECTION);
