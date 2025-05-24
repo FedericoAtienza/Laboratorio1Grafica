@@ -18,6 +18,8 @@ class Settings {
     void init_settings() {
         TTF_Font* font = TTF_OpenFont("../Dependencias/yoster.ttf", 16);
 
+        TTF_Font* font_main_menu = TTF_OpenFont("../Dependencias/yoster.ttf", 64);
+
         wireframeTexture = generate_text(font, "Wireframe", {0, 0, 0});
 
         shadeModelTexture = generate_text(font, "Facetado", {0, 0, 0});
@@ -40,13 +42,13 @@ class Settings {
 
         pauseTexture = generate_text(font, "Pausa", {255, 255, 255});
 
-        playTexture = generate_text(font, "Jugar", {255, 255, 255});
+        playTexture = generate_text(font_main_menu, "Jugar", {255, 255, 255});
 
-        quitTexture = generate_text(font, "Salir", {255, 255, 255});
+        quitTexture = generate_text(font_main_menu, "Salir", {255, 255, 255});
 
-        playSelectedTexture = generate_text(font, "Jugar", {255, 255, 0});
+        playSelectedTexture = generate_text(font_main_menu, "Jugar", {255, 255, 0});
 
-        quitSelectedTexture = generate_text(font, "Salir", {255, 255, 0});
+        quitSelectedTexture = generate_text(font_main_menu, "Salir", {255, 255, 0});
 
         backgroundTexture = LoadTexture("../Dependencias/background.png");
 
@@ -215,16 +217,16 @@ class Settings {
 
         // DIBUJO "JUGAR"
         if (playSelected) {
-            draw_frame({0.44f, 0.56f, 0.66f, 0.56f, 0.0f, 1.0f, 0.0f, 1.0f, playSelectedTexture});
+            draw_frame({0.37f, 0.67f, 0.75f, 0.55f, 0.0f, 1.0f, 0.0f, 1.0f, playSelectedTexture});
 
         } else {
-            draw_frame({0.44f, 0.56f, 0.66f, 0.56f, 0.0f, 1.0f, 0.0f, 1.0f, playTexture});
+            draw_frame({0.37f, 0.67f, 0.75f, 0.55f, 0.0f, 1.0f, 0.0f, 1.0f, playTexture});
         }
         // DIBUJO "SALIR"
         if (!playSelected) {
-            draw_frame({0.45f, 0.57f, 0.69f, 0.64f, 0.0f, 1.0f, 0.0f, 1.0f, quitSelectedTexture});
+            draw_frame({0.40f, 0.70f, 0.76f, 0.66f, 0.0f, 1.0f, 0.0f, 1.0f, quitSelectedTexture});
         } else {
-            draw_frame({0.45f, 0.57f, 0.69f, 0.64f, 0.0f, 1.0f, 0.0f, 1.0f, quitTexture});
+            draw_frame({0.40f, 0.70f, 0.76f, 0.66f, 0.0f, 1.0f, 0.0f, 1.0f, quitTexture});
         }
 
         glMatrixMode(GL_PROJECTION);
